@@ -2,6 +2,8 @@ use std::any::type_name;
 use std::collections::HashMap;
 use std::error::Error;
 use std::process;
+use std::thread::sleep;
+use std::time::Duration;
 
 use regex::Regex;
 use reqwest::Client;
@@ -82,7 +84,7 @@ fn extract_verification_code_from_json(json_str: &str) -> Result<String, serde_j
     }
     let parsed: MessageCollection = serde_json::from_str(json_str).unwrap();
     if let Some(first_message) = parsed.member.first() {
-        let regex = Regex::new(r"(\d+)").unwrap();
+        let regex = Regex::new(r"(\d{4,8})").unwrap();
         if let Some(caps) = regex.captures(&first_message.intro) {
             if let Some(code) = caps.get(0) {
                 return Ok(code.as_str().to_string());
@@ -103,7 +105,7 @@ async fn get_token(account: TempEmailAccount) -> Result<String, reqwest::Error> 
 }
 
 pub async fn get_verification_code(temp_email_account: TempEmailAccount) -> Result<String, reqwest::Error> {
-    for i in 0..60 {
+    for _ in 0..600 {
         let token = get_token(temp_email_account.clone()).await.unwrap();
         let response = Client::new()
             .get(GET_MESSAGE_API)
@@ -115,6 +117,7 @@ pub async fn get_verification_code(temp_email_account: TempEmailAccount) -> Resu
         if verification_code != String::from("") {
             return Ok(verification_code);
         }
+        sleep(Duration::from_secs(1));
     }
     Ok(String::from(""))
 }
