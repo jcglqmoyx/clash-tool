@@ -16,7 +16,7 @@ use crate::api;
 use crate::mail_tm::TempEmailAccount;
 use crate::util::generate_http_request_headers;
 
-pub async fn send_verification_code_to_email(email_address: String) -> Result<(), reqwest::Error> {
+pub async fn send_verification_code_to_email(email_address: String) -> Result<(), Error> {
     // send a post request to the api using TLS 1.2
     let client = Client::builder()
         .use_rustls_tls()
