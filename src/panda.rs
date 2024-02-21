@@ -1,14 +1,5 @@
-use std::str::FromStr;
-use std::sync::Arc;
-
-use reqwest::{Client, Error, Response};
-use reqwest::ClientBuilder;
-use reqwest::header::{HeaderMap, HeaderValue};
-use rustls::{ClientConfig, SupportedCipherSuite};
-use rustls::CipherSuite;
+use reqwest::{Client, Error};
 use serde_json::{json, Value};
-use tokio;
-use tokio::runtime::Runtime;
 
 use api::panda::*;
 
@@ -26,6 +17,7 @@ pub async fn send_verification_code_to_email(email_address: String) -> Result<()
         .headers(generate_http_request_headers())
         .send()
         .await?;
+    println!("send_verification_code_to_email: {:#?}", response.text().await?);
     Ok(())
 }
 

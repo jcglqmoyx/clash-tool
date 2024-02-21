@@ -1,6 +1,3 @@
-use std::any::type_name;
-use std::collections::HashMap;
-use std::error::Error;
 use std::process;
 use std::thread::sleep;
 use std::time::Duration;
@@ -55,7 +52,7 @@ pub async fn create_temp_mail_account() -> Result<TempEmailAccount, reqwest::Err
     let username = get_random_username();
     let address = format!("{}@{}", username, domain);
     let password = get_random_username();
-    let resp = Client::new()
+    Client::new()
         .post(CREATE_ACCOUNT_API)
         .json(&json!({"address": address, "password": password}))
         .send()
