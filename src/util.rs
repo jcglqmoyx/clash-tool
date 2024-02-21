@@ -4,6 +4,7 @@ use std::fs::File;
 use std::io::Write;
 
 use rand::Rng;
+use reqwest::header::{HeaderMap, HeaderValue};
 
 const EMAIL_DOMAINS: [&str; 20] = ["gmail.com", "hotmail.com", "live.com", "yahoo.com", "icloud.com", "outlook.com", "protonmail.com",
     "tutanota.de", "tutanota.com", "tutamail.com", "tuta.io", "yandex.com", "sina.com", "qq.com",
@@ -24,7 +25,7 @@ fn get_chars() -> Vec<char> {
 pub fn get_random_username() -> String {
     let mut random_username = String::new();
     let mut rng = rand::thread_rng();
-    let len: u32 = rng.gen_range(7..10);
+    let len: u32 = rng.gen_range(8..10);
     let chars = get_chars();
     for _ in 0..len {
         let idx = rng.gen_range(0..chars.len());
@@ -57,6 +58,17 @@ impl Record {
             email,
         }
     }
+}
+
+pub fn generate_http_request_headers() -> HeaderMap {
+    let mut headers = HeaderMap::new();
+    headers.insert("User-Agent", HeaderValue::from_static("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36"));
+    headers.insert("Content-Type", HeaderValue::from_static("application/json"));
+    headers.insert("Accept", HeaderValue::from_static("*/*"));
+    headers.insert("Accept-Language", HeaderValue::from_static("en-US,en;q=0.9"));
+    headers.insert("Accept-Encoding", HeaderValue::from_static("gzip, deflate, br"));
+    headers.insert("Connection", HeaderValue::from_static("keep-alive"));
+    headers
 }
 
 impl fmt::Display for Record {

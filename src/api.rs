@@ -13,4 +13,6 @@ pub mod cyan {
 
 pub mod panda {
     pub const MAIL_VERIFICATION_CODE_API: &str = "https://pnod.top/api/v1/passport/comm/sendEmailVerify";
+    pub const REGISTRATION_API: &str = "https://pnod.top/api/v1/passport/auth/register";
+    pub const LOGIN_API: &str = "https://pnod.top/api/v1/passport/auth/login";
 }
