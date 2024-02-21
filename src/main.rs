@@ -17,7 +17,6 @@ use clash_tool::util::{
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     env::set_var("RUST_LOG", "debug");
-    env::set_var("RUST_BACKTRACE", "full");
     env_logger::init();
 
     let args: Vec<String> = env::args().collect();

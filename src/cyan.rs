@@ -62,12 +62,8 @@ pub async fn register_cyan_account(record: &Record) -> Result<Response, Error> {
 pub async fn login_cyan_account(record: &Record) -> Result<HashMap<String, String>, Error> {
     println!("Logging in Cyan account...");
     let params = [("email", &record.email), ("passwd", &record.password)];
-
-    let client = Client::new();
-    let response = client.post(LOGIN_API).form(&params).send().await?;
-
+    let response = Client::new().post(LOGIN_API).form(&params).send().await?;
     let headers = response.headers();
-
     let cookies = headers.get_all("set-cookie").iter().flat_map(|value| {
         value.to_str().ok().and_then(|s| {
             let cookie_parts: Vec<&str> = s.split(';').collect();
