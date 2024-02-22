@@ -23,7 +23,7 @@ pub async fn send_verification_code_to_email(email_address: String) -> Result<()
 }
 
 pub async fn register_panda_node_account(email: TempEmailAccount, verification_code: String) -> Result<(), Error> {
-    log::info!("Registering Panda node account...");
+    log::info!("Registering Panda Node account...");
     let client = Client::builder()
         .use_rustls_tls()
         .build()?;
@@ -42,7 +42,7 @@ pub async fn register_panda_node_account(email: TempEmailAccount, verification_c
 }
 
 pub async fn login_panda_node_account(email: TempEmailAccount) -> Result<String, Error> {
-    log::info!("Logging into Panda node account...");
+    log::info!("Logging into Panda Node account...");
     let client = Client::builder()
         .use_rustls_tls()
         .build()?;
