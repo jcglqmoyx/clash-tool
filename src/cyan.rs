@@ -2,6 +2,7 @@ use std::collections::HashMap;
 use std::fs::File;
 use std::io::copy;
 
+use log::info;
 use reqwest::{
     Client,
     Error,
@@ -41,7 +42,7 @@ fn get_subscription_file_destination() -> String {
 }
 
 pub async fn register_cyan_account(record: &Record) -> Result<Response, Error> {
-    println!("Registering cyan account..");
+    log::info!("Registering cyan account..");
     let url = REGISTRATION_API;
     log(&record);
     let resp = Client::new()
@@ -54,8 +55,8 @@ pub async fn register_cyan_account(record: &Record) -> Result<Response, Error> {
         ])
         .send()
         .await?;
-    println!("Response: {:?} {}", resp.version(), resp.status());
-    println!("Headers: {:#?}\n", resp.headers());
+    info!("Response: {:?} {}", resp.version(), resp.status());
+    info!("Headers: {:#?}", resp.headers());
     Ok(resp)
 }
 

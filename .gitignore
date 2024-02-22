@@ -1,6 +1,4 @@
 /target
 .idea
 .vscode
-result.txt
-
- {"@context":"\/contexts\/Message","@id":"\/messages","@type":"hydra:Collection","hydra:totalItems":1,"hydra:member":[{"@id":"\/messages\/65d4b60df8cd16056e7063d0","@type":"Message","id":"65d4b60df8cd16056e7063d0","msgid":"\u003CCA+1mRc9kfhvad4ZoTs1oM_n=-=t08kuFzgfjNacadWrgsy1bDA@mail.gmail.com\u003E","from":{"address":"jcglqmoyx@gmail.com","name":"Dennis Ritchie"},"to":[{"address":"gsjpclib@puabook.com","name":""}],"subject":"index","intro":"C++ index","seen":false,"isDeleted":false,"hasAttachments":false,"size":2992,"downloadUrl":"\/messages\/65d4b60df8cd16056e7063d0\/download","sourceUrl":"\/sources\/65d4b60df8cd16056e7063d0","createdAt":"2024-02-20T14:23:59+00:00","updatedAt":"2024-02-20T14:24:13+00:00","accountId":"\/accounts\/65d4b54e6ef03ce08b0908f2"}]}
+*.log
