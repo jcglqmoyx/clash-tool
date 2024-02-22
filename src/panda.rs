@@ -18,7 +18,7 @@ pub async fn send_verification_code_to_email(email_address: String) -> Result<()
         .headers(generate_http_request_headers())
         .send()
         .await?;
-    log::info!("send_verification_code_to_email response: {:#?}", response.status());
+    log::info!("Result: {:#?}", response.status());
     Ok(())
 }
 
@@ -37,7 +37,7 @@ pub async fn register_panda_node_account(email: TempEmailAccount, verification_c
         .headers(generate_http_request_headers())
         .send()
         .await?;
-    log::info!("register_panda_node_account response: {:#?}", response.status());
+    log::info!("Result: {:#?}", response.status());
     Ok(())
 }
 
@@ -58,7 +58,7 @@ pub async fn login_panda_node_account(email: TempEmailAccount) -> Result<String,
     let response_text = response.text().await?;
     let v: Value = serde_json::from_str(&response_text).unwrap();
     let token = &v["data"]["token"];
-    log::info!("token: {:#?}", &token);
-    log::info!("subscription link: {:#?}", SUBSCRIPTION_LINK.to_owned() + token.as_str().unwrap());
+    log::info!("Token: {:#?}", &token);
+    log::info!("Subscription link: {:#?}", SUBSCRIPTION_LINK.to_owned() + token.as_str().unwrap());
     Ok("".to_string())
 }
