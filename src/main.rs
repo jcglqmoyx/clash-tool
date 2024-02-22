@@ -59,10 +59,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         "2" => {
             log::info!("You chose to register a Panda account.");
             let temp_email_account = create_temp_mail_account().await?;
-            println!("temp_email_account: {:#?}", &temp_email_account);
             send_verification_code_to_email(temp_email_account.address.clone()).await?;
             let verification_code = get_verification_code(temp_email_account.clone()).await?;
-            println!("code: {:#?}", &verification_code);
             register_panda_node_account(temp_email_account.clone(), verification_code).await?;
             login_panda_node_account(temp_email_account.clone()).await?;
         }

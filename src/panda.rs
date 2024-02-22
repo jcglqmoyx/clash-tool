@@ -1,3 +1,4 @@
+use log::log;
 use reqwest::{Client, Error};
 use serde_json::{json, Value};
 
@@ -8,6 +9,7 @@ use crate::mail_tm::TempEmailAccount;
 use crate::util::generate_http_request_headers;
 
 pub async fn send_verification_code_to_email(email_address: String) -> Result<(), Error> {
+    log::info!("Sending verification code to email...");
     let client = Client::builder()
         .use_rustls_tls()
         .build()?;
@@ -17,11 +19,12 @@ pub async fn send_verification_code_to_email(email_address: String) -> Result<()
         .headers(generate_http_request_headers())
         .send()
         .await?;
-    println!("send_verification_code_to_email: {:#?}", response.text().await?);
+    log::info!("send_verification_code_to_email response: {:#?}", response.text().await?);
     Ok(())
 }
 
 pub async fn register_panda_node_account(email: TempEmailAccount, verification_code: String) -> Result<(), Error> {
+    log::info!("Registering Panda node account...");
     let client = Client::builder()
         .use_rustls_tls()
         .build()?;
@@ -35,11 +38,12 @@ pub async fn register_panda_node_account(email: TempEmailAccount, verification_c
         .headers(generate_http_request_headers())
         .send()
         .await?;
-    println!("register_panda_node_account: {:#?}", response.text().await?);
+    log::info!("register_panda_node_account response: {:#?}", response.text().await?);
     Ok(())
 }
 
 pub async fn login_panda_node_account(email: TempEmailAccount) -> Result<String, Error> {
+    log::info!("Logging into Panda node account...");
     let client = Client::builder()
         .use_rustls_tls()
         .build()?;
@@ -55,7 +59,7 @@ pub async fn login_panda_node_account(email: TempEmailAccount) -> Result<String,
     let response_text = response.text().await?;
     let v: Value = serde_json::from_str(&response_text).unwrap();
     let token = &v["data"]["token"];
-    println!("token: {:#?}", &token);
-    println!("login_panda_node_account: {:#?}", SUBSCRIPTION_LINK.to_owned() + token.as_str().unwrap());
+    log::info!("token: {:#?}", &token);
+    log::info!("subscription link: {:#?}", SUBSCRIPTION_LINK.to_owned() + token.as_str().unwrap());
     Ok("".to_string())
 }

@@ -48,6 +48,7 @@ async fn get_domain() -> Result<String, reqwest::Error> {
 }
 
 pub async fn create_temp_mail_account() -> Result<TempEmailAccount, reqwest::Error> {
+    log::info!("Creating a temporary email account...");
     let domain = get_domain().await.unwrap();
     let username = get_random_username();
     let address = format!("{}@{}", username, domain);
@@ -57,6 +58,7 @@ pub async fn create_temp_mail_account() -> Result<TempEmailAccount, reqwest::Err
         .json(&json!({"address": address, "password": password}))
         .send()
         .await?;
+    log::info!("Temporary email account created: {}", address);
     Ok(TempEmailAccount::new(address.to_lowercase(), password))
 }
 
@@ -102,6 +104,7 @@ async fn get_token(account: TempEmailAccount) -> Result<String, reqwest::Error> 
 }
 
 pub async fn get_verification_code(temp_email_account: TempEmailAccount) -> Result<String, reqwest::Error> {
+    log::info!("Getting verification code...");
     for _ in 0..600 {
         let token = get_token(temp_email_account.clone()).await.unwrap();
         let response = Client::new()
@@ -112,6 +115,7 @@ pub async fn get_verification_code(temp_email_account: TempEmailAccount) -> Resu
         let response_text = response.text().await.unwrap();
         let verification_code = extract_verification_code_from_json(&response_text).unwrap();
         if verification_code != String::from("") {
+            log::info!("Verification code: {}", verification_code);
             return Ok(verification_code);
         }
         sleep(Duration::from_secs(1));
