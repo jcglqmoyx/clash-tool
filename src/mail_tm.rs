@@ -58,7 +58,7 @@ pub async fn create_temp_mail_account() -> Result<TempEmailAccount, reqwest::Err
         .json(&json!({"address": address, "password": password}))
         .send()
         .await?;
-    log::info!("Temporary email account created: {}", address);
+    log::info!("Temporary email account created, address:{}, password: {}", address, password);
     Ok(TempEmailAccount::new(address.to_lowercase(), password))
 }
 

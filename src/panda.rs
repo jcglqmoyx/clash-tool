@@ -1,4 +1,3 @@
-use log::log;
 use reqwest::{Client, Error};
 use serde_json::{json, Value};
 
@@ -19,7 +18,7 @@ pub async fn send_verification_code_to_email(email_address: String) -> Result<()
         .headers(generate_http_request_headers())
         .send()
         .await?;
-    log::info!("send_verification_code_to_email response: {:#?}", response.text().await?);
+    log::info!("send_verification_code_to_email response: {:#?}", response.status());
     Ok(())
 }
 
@@ -38,7 +37,7 @@ pub async fn register_panda_node_account(email: TempEmailAccount, verification_c
         .headers(generate_http_request_headers())
         .send()
         .await?;
-    log::info!("register_panda_node_account response: {:#?}", response.text().await?);
+    log::info!("register_panda_node_account response: {:#?}", response.status());
     Ok(())
 }
 
