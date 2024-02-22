@@ -2,7 +2,6 @@ use std::collections::HashMap;
 use std::fs::File;
 use std::io::copy;
 
-use log::info;
 use reqwest::{
     Client,
     Error,
@@ -11,7 +10,7 @@ use reqwest::{
 };
 
 use crate::api::cyan::*;
-use crate::util::{log, Record};
+use crate::util::Record;
 
 fn cookies_to_string(cookies: &HashMap<String, String>) -> String {
     cookies
@@ -42,9 +41,9 @@ fn get_subscription_file_destination() -> String {
 }
 
 pub async fn register_cyan_account(record: &Record) -> Result<Response, Error> {
-    log::info!("Registering cyan account..");
+    log::info!("Registering Cyanmori account..");
     let url = REGISTRATION_API;
-    log(&record);
+    log::info!("{:#?}", &record);
     let resp = Client::new()
         .post(url)
         .form(&[
@@ -55,13 +54,12 @@ pub async fn register_cyan_account(record: &Record) -> Result<Response, Error> {
         ])
         .send()
         .await?;
-    info!("Response: {:?} {}", resp.version(), resp.status());
-    info!("Headers: {:#?}", resp.headers());
+    log::info!("Register Cyanmori account response: {}", resp.status());
     Ok(resp)
 }
 
 pub async fn login_cyan_account(record: &Record) -> Result<HashMap<String, String>, Error> {
-    println!("Logging in Cyan account...");
+    log::info!("Logging into Cyanmori account...");
     let params = [("email", &record.email), ("passwd", &record.password)];
     let response = Client::new().post(LOGIN_API).form(&params).send().await?;
     let headers = response.headers();
@@ -80,12 +78,12 @@ pub async fn login_cyan_account(record: &Record) -> Result<HashMap<String, Strin
             }
         })
     }).collect::<HashMap<_, _>>();
-    println!("cookies: {:#?}", cookies);
+    log::info!("Cookies: {:#?}", cookies);
     Ok(cookies)
 }
 
 pub async fn get_subscription_link(cookies: &HashMap<String, String>) -> Result<String, ()> {
-    println!("Getting subscription link...");
+    log::info!("Getting subscription link...");
     let resp = Client::new()
         .get(USER_PROFILE_API)
         .header(header::COOKIE, cookies_to_string(cookies))
@@ -98,11 +96,11 @@ pub async fn get_subscription_link(cookies: &HashMap<String, String>) -> Result<
         Some(index) => {
             let substring = string.get(index + substring.len()..).unwrap();
             let next_index = substring.find("\'");
-            println!("Subscription link: {}", &substring[..next_index.unwrap()]);
+            log::info!("Subscription link: {}", &substring[..next_index.unwrap()]);
             Ok(substring[..next_index.unwrap()].parse().unwrap())
         }
         None => {
-            println!("Subscription link not found in the response text.");
+            log::info!("Subscription link not found in the response text.");
             Ok("Failed.".parse().unwrap())
         }
     }
@@ -135,12 +133,12 @@ async fn get_file_name(url: &str) -> Result<String, Box<dyn std::error::Error>> 
 }
 
 pub async fn download_subscription_configuration_file(link: &str) {
-    println!("Downloading configuration file...");
+    log::info!("Downloading configuration file...");
     let resp = reqwest::get(link).await.expect("request failed");
     let body = resp.text().await.expect("body invalid");
     let filename = get_file_name(link).await.unwrap();
     let path = get_subscription_file_destination() + &filename;
     let mut out = File::create(&path).expect("failed to create file");
     copy(&mut body.as_bytes(), &mut out).expect("failed to copy content");
-    println!("Configuration file downloaded, path: {}", path);
+    log::info!("Configuration file downloaded, path: {}", path);
 }

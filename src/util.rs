@@ -1,7 +1,5 @@
 use std::fmt;
 use std::fmt::Formatter;
-use std::fs::File;
-use std::io::Write;
 
 use rand::Rng;
 use reqwest::header::{HeaderMap, HeaderValue};
@@ -75,9 +73,4 @@ impl fmt::Display for Record {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         Ok(write!(f, "username: {}\npassword: {}\nemail: {}\n", self.username, self.password, self.email).expect("TODO: panic message"))
     }
-}
-
-pub fn log(record: &Record) {
-    let mut file = File::create("result.txt").expect("Error occurred writing record");
-    file.write_all(record.to_string().as_ref()).expect("TODO: panic message");
 }
