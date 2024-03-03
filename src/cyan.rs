@@ -1,7 +1,5 @@
 use std::{
     collections::HashMap,
-    fs::File,
-    io::copy,
 };
 
 use reqwest::{

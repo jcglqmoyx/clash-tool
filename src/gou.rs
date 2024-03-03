@@ -1,19 +1,29 @@
-use std::collections::HashMap;
-use std::io::Read;
+use std::{
+    collections::HashMap,
+    io::Read,
+};
 
 use encoding_rs_io::DecodeReaderBytesBuilder;
-use reqwest::{Client, Error, header};
-use reqwest::cookie::Cookie;
-use reqwest::header::COOKIE;
+use reqwest::{
+    Client,
+    cookie::Cookie,
+    Error,
+    header::COOKIE,
+};
 use scraper::{Html, Selector};
-use serde::de::StdError;
 use serde_json::json;
-use tokio::io::AsyncWriteExt;
 
-use crate::{mail_tm, util};
-use crate::api::gou;
-use crate::api::gou::LOGIN_API;
-use crate::util::{cookies_to_string, generate_http_request_headers, get_random_username};
+use crate::{
+    api::gou::{
+        self,
+        LOGIN_API,
+    },
+    mail_tm,
+    util::{
+        cookies_to_string,
+        generate_http_request_headers,
+        get_random_username,
+    }};
 
 pub async fn send_verification_code_to_email(email_address: String) -> Result<(), Error> {
     log::info!("Sending verification code to email...");
