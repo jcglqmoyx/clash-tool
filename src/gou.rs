@@ -102,7 +102,6 @@ pub async fn get_subscription_link(cookies: &HashMap<String, String>) -> Result<
     for element in document.select(&selector) {
         if let Some(value) = element.value().attr("value") {
             log::info!("Found subscription link: {}", value);
-            return Ok(value.to_string());
         }
     }
 
