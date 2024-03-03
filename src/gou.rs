@@ -50,7 +50,7 @@ pub async fn register(email: mail_tm::TempEmailAccount, verification_code: Strin
         .json(&json!({
             "email": email.address,
             "name": email.address,
-            "password": email.password,
+            "passwd": email.password,
             "repasswd": email.password,
             "wechat": get_random_username(8, 10),
             "imtype": 1,
@@ -66,6 +66,7 @@ pub async fn register(email: mail_tm::TempEmailAccount, verification_code: Strin
 }
 
 pub async fn login(email: mail_tm::TempEmailAccount) -> Result<HashMap<String, String>, Error> {
+    log::info!("Logging into 加速狗 account...");
     let response = Client::new()
         .post(LOGIN_API)
         .json(&json!({
