@@ -17,3 +17,8 @@ pub mod panda {
     pub const LOGIN_API: &str = "https://pnod.top/api/v1/passport/auth/login";
     pub const SUBSCRIPTION_LINK: &str = "https://www.dnod.top/api/v1/client/subscribe?token=";
 }
+
+pub mod gou {
+    pub const MAIL_VERIFICATION_CODE_API: &str = "https://jiasugou.me/auth/send";
+    pub const REGISTRATION_API: &str = "https://jiasugou.me/auth/register";
+}

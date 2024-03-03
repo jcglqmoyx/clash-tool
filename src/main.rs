@@ -3,25 +3,12 @@ use std::env;
 use fern::Dispatch;
 use log::LevelFilter;
 
-use clash_tool::cyan::{
-    download_subscription_configuration_file,
-    get_subscription_link,
-    login_cyan_account,
-    register_cyan_account,
-};
-use clash_tool::mail_tm::{
-    create_temp_mail_account,
-    get_verification_code,
-};
-use clash_tool::panda::{
-    login_panda_node_account,
-    register_panda_node_account,
-    send_verification_code_to_email,
-};
-use clash_tool::util::{
-    get_random_email,
-    get_random_username,
-    Record,
+use clash_tool::{
+    cyan,
+    gou,
+    mail_tm,
+    panda,
+    util,
 };
 
 #[tokio::main]
@@ -43,28 +30,36 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let args: Vec<String> = env::args().collect();
     let option = if args.len() == 1 { "h" } else { &args[1] };
-    let record = Record::new(
-        get_random_username().to_string(),
-        get_random_username().to_string(),
-        get_random_email(&get_random_username()).to_string(),
+    let record = util::Record::new(
+        util::get_random_username().to_string(),
+        util::get_random_username().to_string(),
+        util::get_random_email(&util::get_random_username()).to_string(),
     );
     match option {
         "1" => {
             log::info!("You chose to register a Cyanmori account.");
-            register_cyan_account(&record).await?;
-            let cookies = login_cyan_account(&record).await;
-            let subscription_link = get_subscription_link(&cookies.unwrap()).await;
-            download_subscription_configuration_file(&subscription_link.unwrap()).await;
+            cyan::register(&record).await?;
+            let cookies = cyan::login(&record).await;
+            let subscription_link = cyan::get_subscription_link(&cookies.unwrap()).await;
+            cyan::download_subscription_configuration_file(&subscription_link.unwrap()).await;
         }
         "2" => {
             log::info!("You chose to register a Panda account.");
-            let temp_email_account = create_temp_mail_account().await?;
-            send_verification_code_to_email(temp_email_account.address.clone()).await?;
-            let verification_code = get_verification_code(temp_email_account.clone()).await?;
-            register_panda_node_account(temp_email_account.clone(), verification_code).await?;
-            login_panda_node_account(temp_email_account.clone()).await?;
+            let temp_email_account = mail_tm::create_temp_mail_account().await?;
+            panda::verify(temp_email_account.address.clone()).await?;
+            let verification_code = mail_tm::get_verification_code(temp_email_account.clone()).await?;
+            panda::register(temp_email_account.clone(), verification_code).await?;
+            panda::login(temp_email_account.clone()).await?;
         }
-        "h" => { print!("1: Cyanmori\n2: Panda\nh: show help\n"); }
+        "3" => {
+            log::info!("You chose to register a 加速狗 account.");
+            // let temp_email_account = mail_tm::create_temp_mail_account().await?;
+            let temp_email_account = mail_tm::TempEmailAccount::new("dearapricot@puabook.com".to_string(), "8>v*VO>Je^".to_string());
+            // gou::send_verification_code_to_email(temp_email_account.address.clone()).await?;
+            let verification_code = mail_tm::get_verification_code(temp_email_account.clone()).await?;
+            gou::register(temp_email_account.clone(), verification_code).await?;
+        }
+        "h" => { print!("1: Cyanmori\n2: Panda\n3: 加速狗\nh: show help\n"); }
         _ => { println!("doing nothing"); }
     }
     Ok(())

@@ -1,14 +1,18 @@
-use std::process;
-use std::thread::sleep;
-use std::time::Duration;
+use std::{
+    process,
+    thread::sleep,
+    time::Duration,
+};
 
 use regex::Regex;
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
 use serde_json::json;
 
-use crate::api::mail_tm::*;
-use crate::util::get_random_username;
+use crate::{
+    api::mail_tm,
+    util::get_random_username,
+};
 
 fn find_substring_after_index(s: &str, substring: &str, start_index: usize) -> Option<usize> {
     if let Some(substring_index) = s[start_index..].find(substring) {
@@ -20,7 +24,7 @@ fn find_substring_after_index(s: &str, substring: &str, start_index: usize) -> O
 
 async fn get_domain() -> Result<String, reqwest::Error> {
     let client = Client::new();
-    match client.get(GET_DOMAIN_API).send().await {
+    match client.get(mail_tm::GET_DOMAIN_API).send().await {
         Ok(response) => {
             match response.text().await {
                 Ok(s) => {
@@ -54,7 +58,7 @@ pub async fn create_temp_mail_account() -> Result<TempEmailAccount, reqwest::Err
     let address = format!("{}@{}", username, domain);
     let password = get_random_username();
     Client::new()
-        .post(CREATE_ACCOUNT_API)
+        .post(mail_tm::CREATE_ACCOUNT_API)
         .json(&json!({"address": address, "password": password}))
         .send()
         .await?;
@@ -95,7 +99,7 @@ fn extract_verification_code_from_json(json_str: &str) -> Result<String, serde_j
 
 async fn get_token(account: TempEmailAccount) -> Result<String, reqwest::Error> {
     let response = Client::new()
-        .post(ACCESS_TOKEN_API)
+        .post(mail_tm::ACCESS_TOKEN_API)
         .json(&json!({"address": account.address,"password": account.password,}))
         .send()
         .await?;
@@ -108,7 +112,7 @@ pub async fn get_verification_code(temp_email_account: TempEmailAccount) -> Resu
     for _ in 0..600 {
         let token = get_token(temp_email_account.clone()).await.unwrap();
         let response = Client::new()
-            .get(GET_MESSAGE_API)
+            .get(mail_tm::GET_MESSAGE_API)
             .header("Authorization", format!("Bearer {}", token))
             .send()
             .await?;

@@ -1,6 +1,8 @@
-use std::collections::HashMap;
-use std::fs::File;
-use std::io::copy;
+use std::{
+    collections::HashMap,
+    fs::File,
+    io::copy,
+};
 
 use reqwest::{
     Client,
@@ -9,8 +11,10 @@ use reqwest::{
     Response,
 };
 
-use crate::api::cyan::*;
-use crate::util::Record;
+use crate::{
+    api::cyan,
+    util::Record,
+};
 
 fn cookies_to_string(cookies: &HashMap<String, String>) -> String {
     cookies
@@ -40,9 +44,9 @@ fn get_subscription_file_destination() -> String {
     }
 }
 
-pub async fn register_cyan_account(record: &Record) -> Result<Response, Error> {
+pub async fn register(record: &Record) -> Result<Response, Error> {
     log::info!("Registering Cyanmori account..");
-    let url = REGISTRATION_API;
+    let url = cyan::REGISTRATION_API;
     log::info!("{:#?}", &record);
     let resp = Client::new()
         .post(url)
@@ -58,10 +62,10 @@ pub async fn register_cyan_account(record: &Record) -> Result<Response, Error> {
     Ok(resp)
 }
 
-pub async fn login_cyan_account(record: &Record) -> Result<HashMap<String, String>, Error> {
+pub async fn login(record: &Record) -> Result<HashMap<String, String>, Error> {
     log::info!("Logging into Cyanmori account...");
     let params = [("email", &record.email), ("passwd", &record.password)];
-    let response = Client::new().post(LOGIN_API).form(&params).send().await?;
+    let response = Client::new().post(cyan::LOGIN_API).form(&params).send().await?;
     let headers = response.headers();
     let cookies = headers.get_all("set-cookie").iter().flat_map(|value| {
         value.to_str().ok().and_then(|s| {
@@ -85,7 +89,7 @@ pub async fn login_cyan_account(record: &Record) -> Result<HashMap<String, Strin
 pub async fn get_subscription_link(cookies: &HashMap<String, String>) -> Result<String, ()> {
     log::info!("Getting subscription link...");
     let resp = Client::new()
-        .get(USER_PROFILE_API)
+        .get(cyan::USER_PROFILE_API)
         .header(header::COOKIE, cookies_to_string(cookies))
         .send()
         .await;
