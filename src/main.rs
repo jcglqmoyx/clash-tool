@@ -41,7 +41,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             cyan::register(&record).await?;
             let cookies = cyan::login(&record).await;
             let subscription_link = cyan::get_subscription_link(&cookies.unwrap()).await;
-            cyan::download_subscription_configuration_file(&subscription_link.unwrap()).await;
+            util::download_subscription_configuration_file(&subscription_link.unwrap()).await;
         }
         "2" => {
             log::info!("You chose to register a Panda account.");
@@ -53,11 +53,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
         "3" => {
             log::info!("You chose to register a 加速狗 account.");
-            // let temp_email_account = mail_tm::create_temp_mail_account().await?;
-            let temp_email_account = mail_tm::TempEmailAccount::new("94effective@yogirt.com".to_string(), "94effective@yogirt.com".to_string());
-            // gou::send_verification_code_to_email(temp_email_account.address.clone()).await?;
-            // let verification_code = mail_tm::get_verification_code(temp_email_account.clone()).await?;
-            // gou::register(temp_email_account.clone(), verification_code).await?;
+            let temp_email_account = mail_tm::create_temp_mail_account().await?;
+            gou::send_verification_code_to_email(temp_email_account.address.clone()).await?;
+            let verification_code = mail_tm::get_verification_code(temp_email_account.clone()).await?;
+            gou::register(temp_email_account.clone(), verification_code).await?;
             let cookies = gou::login(temp_email_account.clone()).await?;
             gou::get_subscription_link(&cookies).await?;
         }

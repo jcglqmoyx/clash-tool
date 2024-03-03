@@ -1,15 +1,19 @@
 use std::collections::HashMap;
-use std::fmt;
+use std::io::Read;
 
-use log::log;
+use encoding_rs_io::DecodeReaderBytesBuilder;
 use reqwest::{Client, Error, header};
 use reqwest::cookie::Cookie;
+use reqwest::header::COOKIE;
+use scraper::{Html, Selector};
+use serde::de::StdError;
 use serde_json::json;
+use tokio::io::AsyncWriteExt;
 
 use crate::{mail_tm, util};
-use crate::api::{gou, panda};
+use crate::api::gou;
 use crate::api::gou::LOGIN_API;
-use crate::util::{generate_http_request_headers, get_random_username};
+use crate::util::{cookies_to_string, generate_http_request_headers, get_random_username};
 
 pub async fn send_verification_code_to_email(email_address: String) -> Result<(), Error> {
     log::info!("Sending verification code to email...");
@@ -66,16 +70,35 @@ pub async fn login(email: mail_tm::TempEmailAccount) -> Result<HashMap<String, S
     Ok(cookies)
 }
 
-pub async fn get_subscription_link(cookies: &HashMap<String, String>) -> Result<String, Error> {
+pub async fn get_subscription_link(cookies: &HashMap<String, String>) -> Result<String, Box<dyn std::error::Error>> {
     let response = Client::new()
         .get(gou::USER_PROFILE_API)
-        .headers(generate_http_request_headers())
-        .header(header::COOKIE, util::cookies_to_string(cookies))
+        .header(COOKIE, cookies_to_string(cookies))
         .send()
+        .await?
+        .bytes()
         .await?;
-    log::info!("Result: {:#?}", response.status());
-    println!("{:#?}", response.text().await?);
-    Ok("".to_string())
+
+    let cursor = std::io::Cursor::new(response.to_vec());
+    let mut decoder = DecodeReaderBytesBuilder::new().build(cursor);
+    let mut contents = Vec::new();
+    decoder.read_to_end(&mut contents)?;
+    let contents = String::from_utf8(contents).unwrap();
+
+    let document = Html::parse_document(&contents);
+    let selector = Selector::parse(r#"input.form-control-monospace.cust-link[name="input1"]"#).expect("Couldn't create selector.");
+    let mut cnt = 1;
+    for element in document.select(&selector) {
+        if let Some(value) = element.value().attr("value") {
+            cnt += 1;
+            if cnt == 2 {
+                log::info!("Subscription link: {}", value);
+                return Ok(value.to_string());
+            }
+        }
+    }
+
+    Ok("".parse().unwrap())
 }
 
 fn parse_cookies(cookies: Vec<Cookie>) -> HashMap<String, String> {
