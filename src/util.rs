@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use std::fmt;
 use std::fmt::Formatter;
 
@@ -41,6 +42,25 @@ pub fn get_random_email(prefix: &str) -> String {
     random_email
 }
 
+pub fn generate_http_request_headers() -> HeaderMap {
+    let mut headers = HeaderMap::new();
+    headers.insert("User-Agent", HeaderValue::from_static("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36"));
+    headers.insert("Content-Type", HeaderValue::from_static("application/json; charset=utf-8"));
+    headers.insert("Accept", HeaderValue::from_static("*/*"));
+    headers.insert("Accept-Language", HeaderValue::from_static("en-US,en;q=0.9"));
+    headers.insert("Accept-Encoding", HeaderValue::from_static("gzip, deflate, br"));
+    headers.insert("Connection", HeaderValue::from_static("keep-alive"));
+    headers
+}
+
+pub fn cookies_to_string(cookies: &HashMap<String, String>) -> String {
+    cookies
+        .iter()
+        .map(|(name, value)| format!("{}={}", name, value))
+        .collect::<Vec<_>>()
+        .join("; ")
+}
+
 #[derive(Debug)]
 pub struct Record {
     pub username: String,
@@ -56,17 +76,6 @@ impl Record {
             email,
         }
     }
-}
-
-pub fn generate_http_request_headers() -> HeaderMap {
-    let mut headers = HeaderMap::new();
-    headers.insert("User-Agent", HeaderValue::from_static("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36"));
-    headers.insert("Content-Type", HeaderValue::from_static("application/json"));
-    headers.insert("Accept", HeaderValue::from_static("*/*"));
-    headers.insert("Accept-Language", HeaderValue::from_static("en-US,en;q=0.9"));
-    headers.insert("Accept-Encoding", HeaderValue::from_static("gzip, deflate, br"));
-    headers.insert("Connection", HeaderValue::from_static("keep-alive"));
-    headers
 }
 
 impl fmt::Display for Record {

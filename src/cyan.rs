@@ -13,16 +13,9 @@ use reqwest::{
 
 use crate::{
     api::cyan,
-    util::Record,
+    util,
 };
 
-fn cookies_to_string(cookies: &HashMap<String, String>) -> String {
-    cookies
-        .iter()
-        .map(|(name, value)| format!("{}={}", name, value))
-        .collect::<Vec<_>>()
-        .join("; ")
-}
 
 fn get_subscription_file_destination() -> String {
     let os_type = std::env::consts::OS;
@@ -44,7 +37,7 @@ fn get_subscription_file_destination() -> String {
     }
 }
 
-pub async fn register(record: &Record) -> Result<Response, Error> {
+pub async fn register(record: &util::Record) -> Result<Response, Error> {
     log::info!("Registering Cyanmori account..");
     let url = cyan::REGISTRATION_API;
     log::info!("{:#?}", &record);
@@ -62,7 +55,7 @@ pub async fn register(record: &Record) -> Result<Response, Error> {
     Ok(resp)
 }
 
-pub async fn login(record: &Record) -> Result<HashMap<String, String>, Error> {
+pub async fn login(record: &util::Record) -> Result<HashMap<String, String>, Error> {
     log::info!("Logging into Cyanmori account...");
     let params = [("email", &record.email), ("passwd", &record.password)];
     let response = Client::new().post(cyan::LOGIN_API).form(&params).send().await?;
@@ -90,7 +83,7 @@ pub async fn get_subscription_link(cookies: &HashMap<String, String>) -> Result<
     log::info!("Getting subscription link...");
     let resp = Client::new()
         .get(cyan::USER_PROFILE_API)
-        .header(header::COOKIE, cookies_to_string(cookies))
+        .header(header::COOKIE, util::cookies_to_string(cookies))
         .send()
         .await;
     let response_text = resp.unwrap().text().await;

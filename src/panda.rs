@@ -60,5 +60,5 @@ pub async fn login(email: mail_tm::TempEmailAccount) -> Result<String, Error> {
     let token = &v["data"]["token"];
     log::info!("Token: {:#?}", &token);
     log::info!("Subscription link: {:#?}", panda::SUBSCRIPTION_LINK.to_owned() + token.as_str().unwrap());
-    Ok("".to_string())
+    Ok(String::from("ok"))
 }

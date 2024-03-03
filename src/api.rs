@@ -21,4 +21,6 @@ pub mod panda {
 pub mod gou {
     pub const MAIL_VERIFICATION_CODE_API: &str = "https://jiasugou.me/auth/send";
     pub const REGISTRATION_API: &str = "https://jiasugou.me/auth/register";
+    pub const LOGIN_API: &str = "https://jiasugou.me/auth/login";
+    pub const USER_PROFILE_API: &str = "https://jiasugou.me/user";
 }
