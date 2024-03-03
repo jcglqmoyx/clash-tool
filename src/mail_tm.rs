@@ -54,9 +54,9 @@ async fn get_domain() -> Result<String, reqwest::Error> {
 pub async fn create_temp_mail_account() -> Result<TempEmailAccount, reqwest::Error> {
     log::info!("Creating a temporary email account...");
     let domain = get_domain().await.unwrap();
-    let username = get_random_username();
+    let username = get_random_username(8,10);
     let address = format!("{}@{}", username, domain);
-    let password = get_random_username();
+    let password = get_random_username(8,10);
     Client::new()
         .post(mail_tm::CREATE_ACCOUNT_API)
         .json(&json!({"address": address, "password": password}))

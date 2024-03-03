@@ -52,7 +52,7 @@ pub async fn register(email: mail_tm::TempEmailAccount, verification_code: Strin
             "name": email.address,
             "password": email.password,
             "repasswd": email.password,
-            "wechat": get_random_username(),
+            "wechat": get_random_username(8, 10),
             "imtype": 1,
             "code": 0,
             "emailcode": verification_code,
@@ -60,7 +60,8 @@ pub async fn register(email: mail_tm::TempEmailAccount, verification_code: Strin
         .headers(generate_http_request_headers())
         .send()
         .await?;
-    log::info!("Result: {:#?}", response.status());
+    log::info!("Result: {:#?}", &response.status());
+    println!("{:#?}", &response.text().await);
     Ok(())
 }
 

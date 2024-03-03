@@ -30,13 +30,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let args: Vec<String> = env::args().collect();
     let option = if args.len() == 1 { "h" } else { &args[1] };
-    let record = util::Record::new(
-        util::get_random_username().to_string(),
-        util::get_random_username().to_string(),
-        util::get_random_email(&util::get_random_username()).to_string(),
-    );
     match option {
         "1" => {
+            let record = util::Record::new(
+                util::get_random_username(8, 10).to_string(),
+                util::get_random_username(8, 10).to_string(),
+                util::get_random_email(&util::get_random_username(8, 10)).to_string(),
+            );
             log::info!("You chose to register a Cyanmori account.");
             cyan::register(&record).await?;
             let cookies = cyan::login(&record).await;
