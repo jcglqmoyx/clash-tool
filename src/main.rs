@@ -10,7 +10,6 @@ use clash_tool::{
     panda,
     util,
 };
-use clash_tool::mail_tm::TempEmailAccount;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
