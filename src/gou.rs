@@ -99,13 +99,15 @@ pub async fn get_subscription_link(cookies: &HashMap<String, String>) -> Result<
 
     let document = Html::parse_document(&contents);
     let selector = Selector::parse(r#"input.form-control-monospace.cust-link[name="input1"]"#).expect("Couldn't create selector.");
+    let mut subscription_link = String::new();
     for element in document.select(&selector) {
         if let Some(value) = element.value().attr("value") {
             log::info!("Found subscription link: {}", value);
+            subscription_link = value.to_string();
         }
     }
 
-    Ok("".parse().unwrap())
+    Ok(subscription_link)
 }
 
 fn parse_cookies(cookies: Vec<Cookie>) -> HashMap<String, String> {
