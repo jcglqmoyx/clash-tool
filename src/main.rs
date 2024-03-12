@@ -1,7 +1,6 @@
 use std::{env, thread};
 use std::time::Duration;
 
-use chrono::Local;
 use clipboard::{ClipboardContext, ClipboardProvider};
 use enigo::{Button, Enigo, Key, Keyboard, Mouse, Settings};
 use enigo::Coordinate::Abs;
@@ -78,35 +77,35 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             match env::consts::OS {
                 "macos" => {
                     let mut enigo = Enigo::new(&Settings::default()).unwrap();
-                    enigo.move_mouse(1315, 20, Abs);
+                    enigo.move_mouse(1315, 20, Abs).unwrap();
                     thread::sleep(Duration::from_millis(100));
-                    enigo.button(Button::Left, Click);
+                    enigo.button(Button::Left, Click).unwrap();
                     thread::sleep(Duration::from_millis(100));
                     enigo.key(Key::Meta, Press).unwrap();
                     thread::sleep(Duration::from_millis(100));
                     enigo.key(Key::Unicode('M'), Press).unwrap();
                     thread::sleep(Duration::from_millis(100));
 
-                    enigo.move_mouse(720, 470, Abs);
+                    enigo.move_mouse(720, 470, Abs).unwrap();
                     thread::sleep(Duration::from_millis(100));
-                    enigo.button(Button::Left, Click);
+                    enigo.button(Button::Left, Click).unwrap();
                     thread::sleep(Duration::from_millis(500));
-                    enigo.move_mouse(890, 370, Abs);
+                    enigo.move_mouse(890, 370, Abs).unwrap();
                     thread::sleep(Duration::from_millis(500));
-                    enigo.button(Button::Left, Click);
+                    enigo.button(Button::Left, Click).unwrap();
                     thread::sleep(Duration::from_millis(500));
                     enigo.key(Key::Meta, Press).unwrap();
                     thread::sleep(Duration::from_millis(100));
                     enigo.key(Key::Unicode('V'), Click).unwrap();
                     thread::sleep(Duration::from_millis(100));
-                    enigo.move_mouse(920, 440, Abs);
+                    enigo.move_mouse(920, 440, Abs).unwrap();
                     thread::sleep(Duration::from_millis(100));
-                    enigo.button(Button::Left, Click);
+                    enigo.button(Button::Left, Click).unwrap();
                 }
                 _ => {}
             }
         }
-        None => { println!("No subscription link found."); }
+        None => {}
     }
     Ok(())
 }
