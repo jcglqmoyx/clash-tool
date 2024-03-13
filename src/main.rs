@@ -7,6 +7,9 @@ use enigo::Coordinate::Abs;
 use enigo::Direction::{Click, Press};
 use fern::Dispatch;
 use log::LevelFilter;
+use teloxide::Bot;
+use teloxide::prelude::Requester;
+use teloxide::types::ChatId;
 
 use clash_tool::{
     cyan,
@@ -15,6 +18,7 @@ use clash_tool::{
     panda,
     util,
 };
+use clash_tool::api::panda::SUBSCRIPTION_LINK;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -104,6 +108,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 }
                 _ => {}
             }
+            let chat_id = ChatId(-1001995846440);
+            let bot = Bot::new("6204652445:AAG1iFmVRNipFTRwnNLrwL_2H4R1LAYbsuw");
+            bot.send_message(chat_id, SUBSCRIPTION_LINK).await.unwrap();
         }
         None => {}
     }
