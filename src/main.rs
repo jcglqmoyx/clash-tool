@@ -18,7 +18,6 @@ use clash_tool::{
     panda,
     util,
 };
-use clash_tool::api::panda::SUBSCRIPTION_LINK;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -75,9 +74,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         _ => { println!("doing nothing"); }
     }
     match clash_subscription_link {
-        Some(link) => {
+        Some(ref link) => {
             let mut ctx: ClipboardContext = ClipboardProvider::new().unwrap();
-            ctx.set_contents(link).unwrap();
+            ctx.set_contents(link.clone()).unwrap();
             match env::consts::OS {
                 "macos" => {
                     let mut enigo = Enigo::new(&Settings::default()).unwrap();
@@ -110,7 +109,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             }
             let chat_id = ChatId(-1001995846440);
             let bot = Bot::new("6204652445:AAG1iFmVRNipFTRwnNLrwL_2H4R1LAYbsuw");
-            bot.send_message(chat_id, SUBSCRIPTION_LINK).await.unwrap();
+            bot.send_message(chat_id, clash_subscription_link.unwrap()).await.unwrap();
         }
         None => {}
     }
