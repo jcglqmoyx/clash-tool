@@ -107,8 +107,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 }
                 _ => {}
             }
-            let chat_id = ChatId(-4103248134);
-            let bot = Bot::new("6204652445:AAG1iFmVRNipFTRwnNLrwL_2H4R1LAYbsuw");
+            let chat_id = ChatId(-4197753619);
+            let bot = Bot::new("6833152982:AAEh1LmvPwBzspY70aIHV817VGviA-Pl0pM");
             bot.send_message(chat_id, clash_subscription_link.unwrap()).await.unwrap();
         }
         None => {}
