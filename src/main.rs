@@ -66,11 +66,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
         "4" => {
             log::info!("You chose to register a 小飞侠SSR account.");
-            // let random_email_account = util::get_random_email(&util::get_random_username(8, 10)).to_string();
-            // xfx_ssr::register(&random_email_account).await?;
-            let random_email_account = "52uSQ8G44@sina.com";
+            let random_email_account = util::get_random_email(&util::get_random_username(8, 10)).to_string();
+            xfx_ssr::register(&random_email_account).await?;
             clash_subscription_link = Option::from(xfx_ssr::login(&random_email_account).await?);
-            println!("link: {:?}", clash_subscription_link);
         }
         "h" => { print!("1: Cyanmori\n2: Panda\n3: 加速狗\n4:小飞侠SSR\nh: show help\n"); }
         _ => { println!("doing nothing"); }
