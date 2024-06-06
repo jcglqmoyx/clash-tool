@@ -59,6 +59,6 @@ pub async fn login(email: mail_tm::TempEmailAccount) -> Result<String, Error> {
     let v: Value = serde_json::from_str(&response_text).unwrap();
     let token = &v["data"]["token"];
     log::info!("Token: {:#?}", &token);
-    log::info!("Subscription link: {:#?}", panda::SUBSCRIPTION_LINK.to_owned() + token.as_str().unwrap());
-    Ok(panda::SUBSCRIPTION_LINK.to_owned() + token.as_str().unwrap())
+    log::info!("Subscription link: {:#?}", panda::SUBSCRIPTION_LINK_PREFIX.to_owned() + token.as_str().unwrap());
+    Ok(panda::SUBSCRIPTION_LINK_PREFIX.to_owned() + token.as_str().unwrap())
 }
