@@ -68,6 +68,15 @@
     <label for="console"></label><textarea id="console" placeholder="Console output will appear here..."></textarea>
 </div>
 <script>
+    function addListener() {
+        document.getElementById('console').addEventListener('click', function () {
+            this.select();
+            document.execCommand('copy');
+        });
+    }
+
+    addListener();
+
     function sleep(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
@@ -293,11 +302,6 @@
             const subscriptionLink = await getPandaNodesSubscriptionLink(email, email);
             console.log("Subscription Link: %s", subscriptionLink);
             document.getElementById('console').value = subscriptionLink;
-            document.getElementById('console').addEventListener('click', function () {
-                this.select();
-                document.execCommand('copy');
-            });
-
         } else {
             console.log("Failed to find a verification code, aborting..");
         }
