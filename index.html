@@ -65,7 +65,7 @@
     <button class="button" onclick="doPanda()">Panda Nodes</button>
     <button class="button">加速狗</button>
     <button class="button">小飞侠SSR</button>
-    <label for="console"></label><textarea id="console" placeholder="Console output will appear here..."></textarea>
+    <label for="console"></label><textarea id="console"></textarea>
 </div>
 <script>
     function addListener() {
@@ -116,6 +116,7 @@
 
             const responseData = await response.json();
             console.log(responseData);
+            document.getElementById('console').value += responseData + "\n";
         } catch (error) {
             console.error("Error:", error);
         }
@@ -220,6 +221,7 @@
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             console.log('Verification code sent to email address %s.', email);
+            document.getElementById('console').value += 'Verification code sent to email address ' + email + '.\n';
         } catch (error) {
             console.error("Error:", error);
         }
@@ -248,9 +250,7 @@
                 throw new Error(`Error: ${response.status} ${response.statusText}`);
             }
 
-            const result = await response.json();
-            console.log('Success:', result);
-            return result;
+            return await response.json();
         } catch (error) {
             console.error('Error:', error);
             throw error;
@@ -298,12 +298,14 @@
         const verificationCode = await getVerificationCode(tempEmailToken);
         if (verificationCode != null) {
             console.log("Verification code: %s.", verificationCode);
+            document.getElementById('console').value += "Verification code: " + verificationCode + ".\n";
             await registerPandaNodesAccount(email, verificationCode, email);
             const subscriptionLink = await getPandaNodesSubscriptionLink(email, email);
             console.log("Subscription Link: %s", subscriptionLink);
-            document.getElementById('console').value = subscriptionLink;
+            document.getElementById('console').value += "Subscription Link: " + subscriptionLink + ".\n";
         } else {
             console.log("Failed to find a verification code, aborting..");
+            document.getElementById('console').value += "Failed to find a verification code, aborting..\n";
         }
     }
 </script>
