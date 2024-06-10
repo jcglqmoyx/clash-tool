@@ -302,7 +302,7 @@
             await registerPandaNodesAccount(email, verificationCode, email);
             const subscriptionLink = await getPandaNodesSubscriptionLink(email, email);
             console.log("Subscription Link: %s", subscriptionLink);
-            document.getElementById('console').value += "Subscription Link: " + subscriptionLink + ".\n";
+            document.getElementById('console').value = subscriptionLink;
         } else {
             console.log("Failed to find a verification code, aborting..");
             document.getElementById('console').value += "Failed to find a verification code, aborting..\n";
