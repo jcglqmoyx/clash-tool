@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive Button Layout</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            color: white;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        .button {
+            display: block;
+            width: 80%;
+            max-width: 300px;
+            margin: 10px auto;
+            padding: 15px;
+            font-size: 1.2em;
+            color: white;
+            background: #333;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .button:hover {
+            background: #555;
+        }
+
+        textarea {
+            width: 100%;
+            height: 150px;
+            margin-top: 20px;
+            padding: 10px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            resize: none;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        @media (min-width: 600px) {
+            .button {
+                display: inline-block;
+                width: auto;
+                margin: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <button class="button" onclick="doPanda()">Panda Nodes</button>
+    <button class="button">加速狗</button>
+    <button class="button">小飞侠SSR</button>
+    <label for="console"></label><textarea id="console" placeholder="Console output will appear here..."></textarea>
+</div>
+<script>
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    async function fetchTempEmailDomain() {
+        const response = await fetch('https://api.mail.tm/domains');
+        const json = await response.json();
+
+        if (json['hydra:member'] && json['hydra:member'].length > 0) {
+            return json['hydra:member'][0]['domain'];
+        }
+        return null;
+    }
+
+    async function createTempEmailAccount(address, password) {
+        const url = "https://api.mail.tm/accounts";
+        const data = {
+            address: address,
+            password: password
+        };
+
+        const headers = {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+        };
+
+        try {
+            const response = await fetch(url, {
+                method: "POST",
+                headers: headers,
+                body: JSON.stringify(data)
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const responseData = await response.json();
+            console.log(responseData);
+        } catch (error) {
+            console.error("Error:", error);
+        }
+    }
+
+    function generateRandomUsername() {
+        const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
+        const length = Math.floor(Math.random() * 2) + 8;
+        let username = '';
+
+        for (let i = 0; i < length; i++) {
+            const randomIndex = Math.floor(Math.random() * characters.length);
+            username += characters[randomIndex];
+        }
+        return username;
+    }
+
+    async function getTempEmailToken(address, password) {
+        const url = "https://api.mail.tm/token";
+        const data = {
+            address: address,
+            password: password
+        };
+
+        const headers = {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+        };
+
+        try {
+            const response = await fetch(url, {
+                method: "POST",
+                headers: headers,
+                body: JSON.stringify(data)
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const responseData = await response.json();
+            return responseData['token'];
+        } catch (error) {
+            console.error("Error:", error);
+        }
+    }
+
+    async function getVerificationCode(token) {
+        while (true) {
+            const url = "https://api.mail.tm/messages";
+
+            const headers = {
+                "Authorization": `Bearer ${token}`,
+                "Accept": "application/json"
+            };
+
+            try {
+                const response = await fetch(url, {
+                    method: "GET",
+                    headers: headers
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const responseData = await response.json();
+                const data = responseData[0];
+                if (data != null) {
+                    const intro = data['intro'];
+                    const regex = /\b\d{4,8}\b/;
+                    const match = intro.match(regex);
+                    if (match) return match[0];
+                }
+            } catch (error) {
+                console.error("Error:", error);
+            }
+            await sleep(1000);
+        }
+    }
+
+    async function sendEmailVerificationPandaNodes(email) {
+        const url = "https://pnod.top/api/v1/passport/comm/sendEmailVerify";
+        const data = {
+            email: email
+        };
+
+        const headers = {
+            "Content-Type": "application/json",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+            "Accept": "application/json, text/plain, */*"
+        };
+
+        try {
+            const response = await fetch(url, {
+                method: "POST",
+                headers: headers,
+                body: JSON.stringify(data)
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            console.log('Verification code sent to email address %s.', email);
+        } catch (error) {
+            console.error("Error:", error);
+        }
+    }
+
+    async function registerPandaNodesAccount(email, email_code, password) {
+        const url = 'https://pnod.top/api/v1/passport/auth/register';
+        const data = {
+            email: email,
+            email_code: email_code,
+            password: password
+        };
+
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json",
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+                    "Accept": "application/json, text/plain, */*"
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (!response.ok) {
+                throw new Error(`Error: ${response.status} ${response.statusText}`);
+            }
+
+            const result = await response.json();
+            console.log('Success:', result);
+            return result;
+        } catch (error) {
+            console.error('Error:', error);
+            throw error;
+        }
+    }
+
+    async function getPandaNodesSubscriptionLink(email, password) {
+        const api = "https://pnod.top/api/v1/passport/auth/login";
+
+        const data = {
+            email: email,
+            password: password
+        };
+
+        try {
+            const response = await fetch(api, {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json",
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+                    "Accept": "application/json, text/plain, */*"
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (!response.ok) {
+                throw new Error(`Error: ${response.status} ${response.statusText}`);
+            }
+
+            const result = await response.json();
+            return "https://www.dnod.top/api/v1/client/subscribe?token=" + result['data']['token'];
+        } catch (error) {
+            console.error('Error:', error);
+            throw error;
+        }
+    }
+
+    async function doPanda() {
+        const domain = await fetchTempEmailDomain();
+        const username = generateRandomUsername();
+        const email = username + '@' + domain;
+        await createTempEmailAccount(email, email);
+        await sendEmailVerificationPandaNodes(email);
+        const tempEmailToken = await getTempEmailToken(email, email);
+        const verificationCode = await getVerificationCode(tempEmailToken);
+        if (verificationCode != null) {
+            console.log("Verification code: %s.", verificationCode);
+            await registerPandaNodesAccount(email, verificationCode, email);
+            const subscriptionLink = await getPandaNodesSubscriptionLink(email, email);
+            console.log("Subscription Link: %s", subscriptionLink);
+            document.getElementById('console').value = subscriptionLink;
+            document.getElementById('console').addEventListener('click', function () {
+                this.select();
+                document.execCommand('copy');
+            });
+
+        } else {
+            console.log("Failed to find a verification code, aborting..");
+        }
+    }
+</script>
+</body>
+</html>
