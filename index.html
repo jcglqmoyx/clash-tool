@@ -113,10 +113,6 @@
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
-
-            const responseData = await response.json();
-            console.log(responseData);
-            document.getElementById('console').value += responseData + "\n";
         } catch (error) {
             console.error("Error:", error);
         }
