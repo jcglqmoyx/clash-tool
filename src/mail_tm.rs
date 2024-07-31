@@ -1,6 +1,5 @@
 use std::{
     process,
-    thread::sleep,
     time::Duration,
 };
 
@@ -54,9 +53,9 @@ async fn get_domain() -> Result<String, reqwest::Error> {
 pub async fn create_temp_mail_account() -> Result<TempEmailAccount, reqwest::Error> {
     log::info!("Creating a temporary email account...");
     let domain = get_domain().await.unwrap();
-    let username = get_random_username(8,10);
+    let username = get_random_username(8, 10);
     let address = format!("{}@{}", username, domain);
-    let password = get_random_username(9,10);
+    let password = get_random_username(9, 10);
     Client::new()
         .post(mail_tm::CREATE_ACCOUNT_API)
         .json(&json!({"address": address, "password": password}))
@@ -87,9 +86,13 @@ fn extract_verification_code_from_json(json_str: &str) -> Result<String, serde_j
     }
     let parsed: MessageCollection = serde_json::from_str(json_str).unwrap();
     if let Some(first_message) = parsed.member.first() {
-        let regex = Regex::new(r"(\d{4,8})").unwrap();
+        let regex = Regex::new(r"^[a-z0-9]{5,6}$|验证代码为: ([a-zA-Z0-9]{6})，请在网页中填写").unwrap();
         if let Some(caps) = regex.captures(&first_message.intro) {
             if let Some(code) = caps.get(0) {
+                let mut code = code.as_str().to_string();
+                if code.len() > 8 {
+                    code = code[17..23].parse().unwrap();
+                }
                 return Ok(code.as_str().to_string());
             }
         }
@@ -122,7 +125,7 @@ pub async fn get_verification_code(temp_email_account: TempEmailAccount) -> Resu
             log::info!("Verification code: {}", verification_code);
             return Ok(verification_code);
         }
-        sleep(Duration::from_secs(1));
+        tokio::time::sleep(Duration::from_secs(1)).await;
     }
     Ok(String::from(""))
 }

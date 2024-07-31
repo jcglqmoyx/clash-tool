@@ -11,7 +11,7 @@ use teloxide::Bot;
 use teloxide::prelude::Requester;
 use teloxide::types::ChatId;
 
-use clash_tool::{cyan, gou, mail_tm, panda, util, xfx_ssr};
+use clash_tool::{cyan, gou, mail_tm, panda, qlgq, util, xfx_ssr};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -70,7 +70,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             xfx_ssr::register(&random_email_account).await?;
             clash_subscription_link = Option::from(xfx_ssr::login(&random_email_account).await?);
         }
-        "h" => { print!("1: Cyanmori\n2: Panda\n3: 加速狗\n4:小飞侠SSR\nh: show help\n"); }
+        "5" => {
+            log::info!("You chose to register a 墙了个墙 account.");
+            let temp_email_account = mail_tm::create_temp_mail_account().await?;
+            qlgq::send_verification_code_to_email(temp_email_account.address.clone()).await?;
+            let verification_code = mail_tm::get_verification_code(temp_email_account.clone()).await?;
+            println!("code:.{}.", &verification_code);
+            qlgq::register(temp_email_account.clone(), verification_code).await?;
+        }
+        "h" => { print!("1: Cyanmori\n2: Panda\n3: 加速狗\n4: 小飞侠SSR\n5: 墙了个墙\nh: show help\n"); }
         _ => { println!("doing nothing"); }
     }
     match clash_subscription_link {
