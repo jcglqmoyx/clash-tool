@@ -34,4 +34,5 @@ pub mod xfx_ssr {
 pub mod qlgq {
     pub const MAIL_VERIFICATION_CODE_API: &str = "https://www.qlgq.top/auth/send";
     pub const REGISTRATION_API: &str = "https://www.qlgq.top/auth/register";
+    pub const LOGIN_API: &str = "https://www.qlgq.top/auth/login";
 }
