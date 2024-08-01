@@ -72,13 +72,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             clash_subscription_link = Option::from(xfx_ssr::login(&random_email_account).await?);
         }
         "5" => {
-            // log::info!("You chose to register a 墙了个墙 account.");
-            // let temp_email_account = mail_tm::create_temp_mail_account().await?;
-            // qlgq::send_verification_code_to_email(temp_email_account.address.clone()).await?;
-            // let verification_code = mail_tm::get_verification_code(temp_email_account.clone()).await?;
-            // qlgq::register(temp_email_account.clone(), verification_code).await?;
-            let temp_email_account =
-                TempEmailAccount::new("1MRW1pbKl@belgianairways.com".to_lowercase(), "NgLWXNi3t".to_string());
+            log::info!("You chose to register a 墙了个墙 account.");
+            let temp_email_account = mail_tm::create_temp_mail_account().await?;
+            qlgq::send_verification_code_to_email(temp_email_account.address.clone()).await?;
+            let verification_code = mail_tm::get_verification_code(temp_email_account.clone()).await?;
+            qlgq::register(temp_email_account.clone(), verification_code).await?;
             let cookies = qlgq::login(temp_email_account.clone()).await?;
             clash_subscription_link = Option::from(qlgq::get_subscription_link(&cookies).await?);
         }
