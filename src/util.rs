@@ -6,6 +6,7 @@ use std::io::copy;
 
 use rand::Rng;
 use reqwest::{Client, header};
+use reqwest::cookie::Cookie;
 use reqwest::header::{HeaderMap, HeaderValue};
 
 const EMAIL_DOMAINS: [&str; 20] = ["gmail.com", "hotmail.com", "live.com", "yahoo.com", "icloud.com", "outlook.com", "protonmail.com",
@@ -56,6 +57,13 @@ pub fn generate_http_request_headers() -> HeaderMap {
     headers
 }
 
+pub fn parse_cookies(cookies: Vec<Cookie>) -> HashMap<String, String> {
+    let mut map = HashMap::new();
+    for cookie in cookies {
+        map.insert(cookie.name().to_string(), cookie.value().to_string());
+    }
+    map
+}
 pub fn cookies_to_string(cookies: &HashMap<String, String>) -> String {
     cookies
         .iter()

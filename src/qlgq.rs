@@ -1,11 +1,17 @@
 use std::collections::HashMap;
+use std::str;
 
+use encoding_rs_io::DecodeReaderBytesBuilder;
+use regex::Regex;
 use reqwest::{Client, Error};
+use reqwest::header::COOKIE;
+use scraper::{Html, Selector};
 use serde_json::json;
+use serde_json::Value::String;
 
 use crate::api::qlgq;
 use crate::mail_tm;
-use crate::util::generate_http_request_headers;
+use crate::util::{cookies_to_string, generate_http_request_headers};
 
 pub async fn send_verification_code_to_email(email_address: String) -> Result<(), Error> {
     log::info!("Sending verification code to email...");
@@ -28,7 +34,6 @@ pub async fn register(email: mail_tm::TempEmailAccount, verification_code: Strin
         .use_rustls_tls()
         .build()?;
 
-    println!("register qlgq account\nemailcode:{}\n,address:{}\n,passwd:{}\n", &verification_code, &email.address.as_str(), email.password.as_str());
     let response = client
         .post(qlgq::REGISTRATION_API)
         .json(&json!({
@@ -39,7 +44,7 @@ pub async fn register(email: mail_tm::TempEmailAccount, verification_code: Strin
             "passwd": email.password.as_str(),
             "repasswd": email.password.as_str(),
         }))
-        // .headers(generate_http_request_headers())
+        .headers(generate_http_request_headers())
         .send()
         .await?;
 
@@ -59,12 +64,24 @@ pub async fn login(email: mail_tm::TempEmailAccount) -> Result<HashMap<String, S
         .send()
         .await?;
 
-    // let cookies = crate::gou::parse_cookies(response.cookies().collect::<Vec<_>>());
-    // log::info!("Cookies: {:#?}", cookies);
-    // log::info!("Result: {:#?}", response.status());
-    // Ok(cookies)
-    println!("response:....{:?}....", response.text().await);
-    let mut res = HashMap::new();
-    res.insert("hello".to_string(), "hello".to_string());
-    Ok(res)
+    let cookies = crate::util::parse_cookies(response.cookies().collect::<Vec<_>>());
+    log::info!("Cookies: {:#?}", cookies);
+    log::info!("Result: {:#?}", response.status());
+    Ok(cookies)
+}
+pub async fn get_subscription_link(cookies: &HashMap<String, String>) -> Result<String, Box<dyn std::error::Error>> {
+    let response = Client::new()
+        .get(qlgq::USER_PROFILE_API)
+        .header(COOKIE, cookies_to_string(cookies))
+        .send()
+        .await?
+        .bytes()
+        .await?;
+
+    let re = Regex::new(r"https://www\.qlgq\.top/link/[a-f0-9]+(\?clash=1)").unwrap();
+    let mut subscription_link = String::from("");
+    for mat in re.find_iter(str::from_utf8(&response).unwrap()) {
+        subscription_link = mat.as_str().to_string();
+    }
+    Ok(subscription_link)
 }

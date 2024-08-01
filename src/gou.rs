@@ -6,24 +6,20 @@ use std::{
 use encoding_rs_io::DecodeReaderBytesBuilder;
 use reqwest::{
     Client,
-    cookie::Cookie,
     Error,
     header::COOKIE,
 };
 use scraper::{Html, Selector};
 use serde_json::json;
 
-use crate::{
-    api::gou::{
-        self,
-        LOGIN_API,
-    },
-    mail_tm,
-    util::{
-        cookies_to_string,
-        generate_http_request_headers,
-        get_random_username,
-    }};
+use crate::{api::gou::{
+    self,
+    LOGIN_API,
+}, mail_tm, util::{
+    cookies_to_string,
+    generate_http_request_headers,
+    get_random_username,
+}, util};
 
 pub async fn send_verification_code_to_email(email_address: String) -> Result<(), Error> {
     log::info!("Sending verification code to email...");
@@ -76,7 +72,7 @@ pub async fn login(email: mail_tm::TempEmailAccount) -> Result<HashMap<String, S
         .send()
         .await?;
 
-    let cookies = parse_cookies(response.cookies().collect::<Vec<_>>());
+    let cookies = util::parse_cookies(response.cookies().collect::<Vec<_>>());
     log::info!("Cookies: {:#?}", cookies);
     log::info!("Result: {:#?}", response.status());
     Ok(cookies)
@@ -108,12 +104,4 @@ pub async fn get_subscription_link(cookies: &HashMap<String, String>) -> Result<
     }
 
     Ok(subscription_link)
-}
-
-fn parse_cookies(cookies: Vec<Cookie>) -> HashMap<String, String> {
-    let mut map = HashMap::new();
-    for cookie in cookies {
-        map.insert(cookie.name().to_string(), cookie.value().to_string());
-    }
-    map
 }

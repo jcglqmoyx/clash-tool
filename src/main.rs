@@ -12,6 +12,7 @@ use teloxide::prelude::Requester;
 use teloxide::types::ChatId;
 
 use clash_tool::{cyan, gou, mail_tm, panda, qlgq, util, xfx_ssr};
+use clash_tool::mail_tm::TempEmailAccount;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -71,14 +72,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             clash_subscription_link = Option::from(xfx_ssr::login(&random_email_account).await?);
         }
         "5" => {
-            log::info!("You chose to register a 墙了个墙 account.");
-            let temp_email_account = mail_tm::create_temp_mail_account().await?;
-
-            qlgq::send_verification_code_to_email(temp_email_account.address.clone()).await?;
-            let verification_code = mail_tm::get_verification_code(temp_email_account.clone()).await?;
-            qlgq::register(temp_email_account.clone(), verification_code).await?;
-            // let temp_email_account = TempEmailAccount::new("mybuq7xrp@belgianairways.com".to_lowercase(), "5nPnAc3fG".to_string());
-            qlgq::login(temp_email_account.clone()).await?;
+            // log::info!("You chose to register a 墙了个墙 account.");
+            // let temp_email_account = mail_tm::create_temp_mail_account().await?;
+            // qlgq::send_verification_code_to_email(temp_email_account.address.clone()).await?;
+            // let verification_code = mail_tm::get_verification_code(temp_email_account.clone()).await?;
+            // qlgq::register(temp_email_account.clone(), verification_code).await?;
+            let temp_email_account =
+                TempEmailAccount::new("1MRW1pbKl@belgianairways.com".to_lowercase(), "NgLWXNi3t".to_string());
+            let cookies = qlgq::login(temp_email_account.clone()).await?;
+            clash_subscription_link = Option::from(qlgq::get_subscription_link(&cookies).await?);
         }
         "h" => { print!("1: Cyanmori\n2: Panda\n3: 加速狗\n4: 小飞侠SSR\n5: 墙了个墙\nh: show help\n"); }
         _ => { println!("doing nothing"); }
