@@ -1,13 +1,11 @@
 use std::collections::HashMap;
 use std::str;
+use std::string::String;
 
-use encoding_rs_io::DecodeReaderBytesBuilder;
 use regex::Regex;
 use reqwest::{Client, Error};
 use reqwest::header::COOKIE;
-use scraper::{Html, Selector};
 use serde_json::json;
-use serde_json::Value::String;
 
 use crate::api::qlgq;
 use crate::mail_tm;
@@ -53,7 +51,6 @@ pub async fn register(email: mail_tm::TempEmailAccount, verification_code: Strin
 }
 pub async fn login(email: mail_tm::TempEmailAccount) -> Result<HashMap<String, String>, Error> {
     log::info!("Logging into 墙了个墙 account...");
-    println!("email is {}.", email.address.clone());
     let response = Client::new()
         .post(qlgq::LOGIN_API)
         .json(&json!({
@@ -78,10 +75,10 @@ pub async fn get_subscription_link(cookies: &HashMap<String, String>) -> Result<
         .bytes()
         .await?;
 
-    let re = Regex::new(r"https://www\.qlgq\.top/link/[a-f0-9]+(\?clash=1)").unwrap();
-    let mut subscription_link = String::from("");
+    let re = Regex::new(r"https://[^\s]+?\.top/link/[^\s]+?\?clash=1").unwrap();
     for mat in re.find_iter(str::from_utf8(&response).unwrap()) {
-        subscription_link = mat.as_str().to_string();
+        log::info!("Subscription link: {}", &mat.as_str().to_string());
+        return Ok(mat.as_str().to_string());
     }
-    Ok(subscription_link)
+    Ok("".to_string())
 }
