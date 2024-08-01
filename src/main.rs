@@ -12,7 +12,6 @@ use teloxide::prelude::Requester;
 use teloxide::types::ChatId;
 
 use clash_tool::{cyan, gou, mail_tm, panda, qlgq, util, xfx_ssr};
-use clash_tool::mail_tm::TempEmailAccount;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
