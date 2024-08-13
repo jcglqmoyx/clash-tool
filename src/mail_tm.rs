@@ -100,7 +100,7 @@ fn extract_verification_code_from_json(json_str: &str) -> Result<String, serde_j
     Ok(String::from(""))
 }
 
-async fn get_token(account: TempEmailAccount) -> Result<String, reqwest::Error> {
+async fn get_token(account: &TempEmailAccount) -> Result<String, reqwest::Error> {
     let response = Client::new()
         .post(mail_tm::ACCESS_TOKEN_API)
         .json(&json!({"address": account.address,"password": account.password,}))
@@ -113,7 +113,7 @@ async fn get_token(account: TempEmailAccount) -> Result<String, reqwest::Error> 
 pub async fn get_verification_code(temp_email_account: TempEmailAccount) -> Result<String, reqwest::Error> {
     log::info!("Getting verification code...");
     for _ in 0..600 {
-        let token = get_token(temp_email_account.clone()).await?;
+        let token = get_token(&temp_email_account).await?;
         let response = Client::new()
             .get(mail_tm::GET_MESSAGE_API)
             .header("Authorization", format!("Bearer {}", token))
@@ -158,7 +158,7 @@ mod tests {
     #[tokio::test]
     async fn test_get_token() {
         let email_account = create_temp_mail_account().await.unwrap();
-        let token = get_token(email_account).await.unwrap();
+        let token = get_token(&email_account).await.unwrap();
         assert_ne!(
             token,
             String::from("")

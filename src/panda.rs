@@ -7,7 +7,7 @@ use crate::{
     util,
 };
 
-pub async fn verify(email_address: String) -> Result<(), Error> {
+pub async fn verify(email_address: &str) -> Result<(), Error> {
     log::info!("Sending verification code to email...");
     let client = Client::builder()
         .use_rustls_tls()
@@ -22,7 +22,7 @@ pub async fn verify(email_address: String) -> Result<(), Error> {
     Ok(())
 }
 
-pub async fn register(email: mail_tm::TempEmailAccount, verification_code: String) -> Result<(), Error> {
+pub async fn register(email: &mail_tm::TempEmailAccount, verification_code: String) -> Result<(), Error> {
     log::info!("Registering Panda Node account...");
     let client = Client::builder()
         .use_rustls_tls()

@@ -21,10 +21,10 @@ pub async fn register(record: &util::Record) -> Result<Response, Error> {
     let resp = Client::new()
         .post(url)
         .form(&[
-            ("name", record.username.clone()),
-            ("email", record.email.clone()),
-            ("passwd", record.password.clone()),
-            ("repasswd", record.password.clone()),
+            ("name", &record.username),
+            ("email", &record.email),
+            ("passwd", &record.password),
+            ("repasswd", &record.password),
         ])
         .send()
         .await?;

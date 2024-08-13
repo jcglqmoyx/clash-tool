@@ -43,9 +43,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         "2" => {
             log::info!("You chose to register a Panda account.");
             let temp_email_account = mail_tm::create_temp_mail_account().await?;
-            panda::verify(temp_email_account.address.clone()).await?;
+            panda::verify(&temp_email_account.address).await?;
             let verification_code = mail_tm::get_verification_code(temp_email_account.clone()).await?;
-            panda::register(temp_email_account.clone(), verification_code).await?;
+            panda::register(&temp_email_account, verification_code).await?;
             clash_subscription_link = Option::from(panda::login(temp_email_account.clone()).await?);
         }
         "3" => {
