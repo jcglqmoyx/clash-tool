@@ -168,7 +168,7 @@ mod tests {
     #[tokio::test]
     async fn test_get_verification_code() {
         let email_account = TempEmailAccount::new(String::from("esabogdee@puabook.com"), String::from("HcAkRNX"));
-        let verification_code = get_verification_code(email_account).await.unwrap();
+        let verification_code = get_verification_code(&email_account).await.unwrap();
         assert_eq!(
             verification_code,
             String::from("")
