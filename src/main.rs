@@ -3,9 +3,7 @@ use std::env;
 use clipboard::{ClipboardContext, ClipboardProvider};
 use fern::Dispatch;
 use log::LevelFilter;
-use teloxide::prelude::Requester;
-use teloxide::types::ChatId;
-use teloxide::Bot;
+use teloxide::{prelude::Requester, types::ChatId, Bot};
 
 use clash_tool::{cyan, gou, mail_tm, panda, qlgq, util, xfx_ssr};
 
@@ -41,7 +39,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             let cookies = cyan::login(&record).await;
             let subscription_link = cyan::get_subscription_link(&cookies.unwrap()).await;
             clash_subscription_link = Option::from(subscription_link.clone().unwrap().to_string());
-            // util::download_subscription_configuration_file(&subscription_link.unwrap()).await;
         }
         "2" => {
             log::info!("You chose to register a Panda account.");
