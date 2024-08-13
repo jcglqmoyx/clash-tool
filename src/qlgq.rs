@@ -3,15 +3,15 @@ use std::str;
 use std::string::String;
 
 use regex::Regex;
-use reqwest::{Client, Error};
 use reqwest::header::COOKIE;
+use reqwest::{Client, Error};
 use serde_json::json;
 
 use crate::api::qlgq;
 use crate::mail_tm;
 use crate::util::{cookies_to_string, generate_http_request_headers};
 
-pub async fn send_verification_code_to_email(email_address: String) -> Result<(), Error> {
+pub async fn send_verification_code_to_email(email_address: &str) -> Result<(), Error> {
     log::info!("Sending verification code to email...");
     let client = Client::builder()
         .use_rustls_tls()
