@@ -96,6 +96,15 @@ fn extract_verification_code_from_json(json_str: &str) -> Result<String, serde_j
                 return Ok(code.as_str().to_string());
             }
         }
+
+        let regex = Regex::new(r"[0-9]{6}").unwrap();
+        if let Some(caps) = regex.captures(&first_message.intro) {
+            if let Some(code) = caps.get(0) {
+                let code = code.as_str().to_string();
+                return Ok(code.as_str().to_string());
+            }
+        }
+        println!("{}\n", first_message.intro);
     }
     Ok(String::from(""))
 }

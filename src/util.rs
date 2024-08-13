@@ -8,7 +8,6 @@ fn get_chars() -> Vec<char> {
     let mut chars = vec![];
     for i in 'a'..='z' {
         chars.push(i);
-        chars.push(i.to_ascii_uppercase())
     }
     for i in '0'..='9' {
         chars.push(i);
@@ -19,7 +18,7 @@ fn get_chars() -> Vec<char> {
 pub fn get_random_username(min_length: u32, max_length: u32) -> String {
     let mut random_username = String::new();
     let mut rng = rand::thread_rng();
-    let len: u32 = rng.gen_range(min_length..max_length);
+    let len: u32 = rng.gen_range(min_length..=max_length);
     let chars = get_chars();
     for _ in 0..len {
         let idx = rng.gen_range(0..chars.len());
