@@ -26,7 +26,7 @@ pub async fn send_verification_code_to_email(email_address: &str) -> Result<(), 
     Ok(())
 }
 
-pub async fn register(email: mail_tm::TempEmailAccount, verification_code: String) -> Result<(), Error> {
+pub async fn register(email: &mail_tm::TempEmailAccount, verification_code: String) -> Result<(), Error> {
     log::info!("Registering 墙了个墙 account...");
     let client = Client::builder()
         .use_rustls_tls()
@@ -49,7 +49,7 @@ pub async fn register(email: mail_tm::TempEmailAccount, verification_code: Strin
     log::info!("Result: {:#?}", &response.text().await);
     Ok(())
 }
-pub async fn login(email: mail_tm::TempEmailAccount) -> Result<HashMap<String, String>, Error> {
+pub async fn login(email: &mail_tm::TempEmailAccount) -> Result<HashMap<String, String>, Error> {
     log::info!("Logging into 墙了个墙 account...");
     let response = Client::new()
         .post(qlgq::LOGIN_API)

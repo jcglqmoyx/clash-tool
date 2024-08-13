@@ -110,7 +110,7 @@ async fn get_token(account: &TempEmailAccount) -> Result<String, reqwest::Error>
     Ok(extract_token_from_json(&response_text).unwrap())
 }
 
-pub async fn get_verification_code(temp_email_account: TempEmailAccount) -> Result<String, reqwest::Error> {
+pub async fn get_verification_code(temp_email_account: &TempEmailAccount) -> Result<String, reqwest::Error> {
     log::info!("Getting verification code...");
     for _ in 0..600 {
         let token = get_token(&temp_email_account).await?;
@@ -130,7 +130,7 @@ pub async fn get_verification_code(temp_email_account: TempEmailAccount) -> Resu
     Ok(String::from(""))
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct TempEmailAccount {
     pub address: String,
     pub password: String,

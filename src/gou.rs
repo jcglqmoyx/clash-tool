@@ -61,7 +61,7 @@ pub async fn register(email: &mail_tm::TempEmailAccount, verification_code: Stri
     Ok(())
 }
 
-pub async fn login(email: mail_tm::TempEmailAccount) -> Result<HashMap<String, String>, Error> {
+pub async fn login(email: &mail_tm::TempEmailAccount) -> Result<HashMap<String, String>, Error> {
     log::info!("Logging into 加速狗 account...");
     let response = Client::new()
         .post(LOGIN_API)

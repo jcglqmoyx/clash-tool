@@ -38,13 +38,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             cyan::register(&record).await?;
             let cookies = cyan::login(&record).await;
             let subscription_link = cyan::get_subscription_link(&cookies.unwrap()).await;
-            clash_subscription_link = Option::from(subscription_link.clone().unwrap().to_string());
+            clash_subscription_link = Option::from(subscription_link.unwrap().to_string());
         }
         "2" => {
             log::info!("You chose to register a Panda account.");
             let temp_email_account = mail_tm::create_temp_mail_account().await?;
             panda::verify(&temp_email_account.address).await?;
-            let verification_code = mail_tm::get_verification_code(temp_email_account.clone()).await?;
+            let verification_code = mail_tm::get_verification_code(&temp_email_account).await?;
             panda::register(&temp_email_account, verification_code).await?;
             clash_subscription_link = Option::from(panda::login(&temp_email_account).await?);
         }
@@ -52,9 +52,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             log::info!("You chose to register a 加速狗 account.");
             let temp_email_account = mail_tm::create_temp_mail_account().await?;
             gou::send_verification_code_to_email(&temp_email_account.address).await?;
-            let verification_code = mail_tm::get_verification_code(temp_email_account.clone()).await?;
+            let verification_code = mail_tm::get_verification_code(&temp_email_account).await?;
             gou::register(&temp_email_account, verification_code).await?;
-            let cookies = gou::login(temp_email_account.clone()).await?;
+            let cookies = gou::login(&temp_email_account).await?;
             clash_subscription_link = Option::from(gou::get_subscription_link(&cookies).await?);
         }
         "4" => {
@@ -67,9 +67,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             log::info!("You chose to register a 墙了个墙 account.");
             let temp_email_account = mail_tm::create_temp_mail_account().await?;
             qlgq::send_verification_code_to_email(&temp_email_account.address).await?;
-            let verification_code = mail_tm::get_verification_code(temp_email_account.clone()).await?;
-            qlgq::register(temp_email_account.clone(), verification_code).await?;
-            let cookies = qlgq::login(temp_email_account.clone()).await?;
+            let verification_code = mail_tm::get_verification_code(&temp_email_account).await?;
+            qlgq::register(&temp_email_account, verification_code).await?;
+            let cookies = qlgq::login(&temp_email_account).await?;
             clash_subscription_link = Option::from(qlgq::get_subscription_link(&cookies).await?);
         }
         "h" => { print!("1: Cyanmori\n2: Panda\n3: 加速狗\n4: 小飞侠SSR\n5: 墙了个墙\nh: show help\n"); }
@@ -78,7 +78,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     match clash_subscription_link {
         Some(ref link) => {
             let mut ctx: ClipboardContext = ClipboardProvider::new()?;
-            ctx.set_contents(link.clone())?;
+            ctx.set_contents(link.to_string())?;
             match env::consts::OS {
                 "macos" => {
                     let chat_id = ChatId(-1002092244317);
