@@ -86,6 +86,7 @@ fn extract_verification_code_from_json(json_str: &str) -> Result<String, serde_j
     }
     let parsed: MessageCollection = serde_json::from_str(json_str)?;
     if let Some(first_message) = parsed.member.first() {
+        // 墙了个墙
         let regex = Regex::new(r"^[a-z0-9]{5,6}$|验证代码为: ([a-zA-Z0-9]{6})，请在网页中填写").unwrap();
         if let Some(caps) = regex.captures(&first_message.intro) {
             if let Some(code) = caps.get(0) {
@@ -97,6 +98,7 @@ fn extract_verification_code_from_json(json_str: &str) -> Result<String, serde_j
             }
         }
 
+        // Panda Nodes, 加速狗
         let regex = Regex::new(r"[0-9]{6}").unwrap();
         if let Some(caps) = regex.captures(&first_message.intro) {
             if let Some(code) = caps.get(0) {
