@@ -1,15 +1,11 @@
-use std::{env, thread};
-use std::time::Duration;
+use std::env;
 
 use clipboard::{ClipboardContext, ClipboardProvider};
-use enigo::{Button, Enigo, Key, Keyboard, Mouse, Settings};
-use enigo::Coordinate::Abs;
-use enigo::Direction::{Click, Press};
 use fern::Dispatch;
 use log::LevelFilter;
-use teloxide::Bot;
 use teloxide::prelude::Requester;
 use teloxide::types::ChatId;
+use teloxide::Bot;
 
 use clash_tool::{cyan, gou, mail_tm, panda, qlgq, util, xfx_ssr};
 
@@ -84,39 +80,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
     match clash_subscription_link {
         Some(ref link) => {
-            let mut ctx: ClipboardContext = ClipboardProvider::new().unwrap();
-            ctx.set_contents(link.clone()).unwrap();
+            let mut ctx: ClipboardContext = ClipboardProvider::new()?;
+            ctx.set_contents(link.clone())?;
             match env::consts::OS {
                 "macos" => {
                     let chat_id = ChatId(-1002092244317);
                     let bot = Bot::new("6833152982:AAEh1LmvPwBzspY70aIHV817VGviA-Pl0pM");
                     bot.send_message(chat_id, clash_subscription_link.unwrap()).await.unwrap();
-
-                    let mut enigo = Enigo::new(&Settings::default()).unwrap();
-                    enigo.move_mouse(1315, 20, Abs).unwrap();
-                    thread::sleep(Duration::from_millis(100));
-                    enigo.button(Button::Left, Click).unwrap();
-                    thread::sleep(Duration::from_millis(100));
-                    enigo.key(Key::Meta, Press).unwrap();
-                    thread::sleep(Duration::from_millis(100));
-                    enigo.key(Key::Unicode('M'), Press).unwrap();
-                    thread::sleep(Duration::from_millis(100));
-
-                    enigo.move_mouse(720, 470, Abs).unwrap();
-                    thread::sleep(Duration::from_millis(100));
-                    enigo.button(Button::Left, Click).unwrap();
-                    thread::sleep(Duration::from_millis(500));
-                    enigo.move_mouse(890, 370, Abs).unwrap();
-                    thread::sleep(Duration::from_millis(500));
-                    enigo.button(Button::Left, Click).unwrap();
-                    thread::sleep(Duration::from_millis(500));
-                    enigo.key(Key::Meta, Press).unwrap();
-                    thread::sleep(Duration::from_millis(100));
-                    enigo.key(Key::Unicode('V'), Click).unwrap();
-                    thread::sleep(Duration::from_millis(100));
-                    enigo.move_mouse(920, 440, Abs).unwrap();
-                    thread::sleep(Duration::from_millis(100));
-                    enigo.button(Button::Left, Click).unwrap();
                 }
                 _ => {}
             }

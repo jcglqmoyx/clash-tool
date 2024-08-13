@@ -41,7 +41,7 @@ pub async fn login(email_account: &str) -> Result<String, Error> {
     struct Data {
         token: String,
     }
-    let json_str = resp.text().await.unwrap();
+    let json_str = resp.text().await?;
     let parsed: Root = serde_json::from_str(&json_str).unwrap();
     println!("Authorization: {}", parsed.data.token);
     println!("Subscription link: {}", xfx_ssr::SUBSCRIPTION_LINK_PREFIX.to_owned() + &parsed.data.token);

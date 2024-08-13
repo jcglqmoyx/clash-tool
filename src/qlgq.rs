@@ -75,7 +75,7 @@ pub async fn get_subscription_link(cookies: &HashMap<String, String>) -> Result<
         .bytes()
         .await?;
 
-    let re = Regex::new(r"https://[^\s]+?\.top/link/[^\s]+?\?clash=1").unwrap();
+    let re = Regex::new(r"https://\S+?\.top/link/\S+?\?clash=1").unwrap();
     for mat in re.find_iter(str::from_utf8(&response).unwrap()) {
         log::info!("Subscription link: {}", &mat.as_str().to_string());
         return Ok(mat.as_str().to_string());

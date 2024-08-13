@@ -1,13 +1,6 @@
-use std::collections::HashMap;
-use std::fmt;
-use std::fmt::Formatter;
-use std::fs::File;
-use std::io::copy;
-
 use rand::Rng;
-use reqwest::{Client, header};
-use reqwest::cookie::Cookie;
-use reqwest::header::{HeaderMap, HeaderValue};
+use reqwest::{cookie::Cookie, header::{HeaderMap, HeaderValue}};
+use std::{collections::HashMap, fmt::{self, Formatter}};
 
 const EMAIL_DOMAINS: [&str; 20] = ["gmail.com", "hotmail.com", "live.com", "yahoo.com", "icloud.com", "outlook.com", "protonmail.com",
     "tutanota.de", "tutanota.com", "tutamail.com", "tuta.io", "yandex.com", "sina.com", "qq.com",
@@ -70,63 +63,6 @@ pub fn cookies_to_string(cookies: &HashMap<String, String>) -> String {
         .map(|(name, value)| format!("{}={}", name, value))
         .collect::<Vec<_>>()
         .join("; ")
-}
-
-async fn get_file_name(url: &str) -> Result<String, Box<dyn std::error::Error>> {
-    let client = Client::new();
-    let resp = client.head(url).send().await?;
-
-    let content_disposition = if let Some(filename) = resp.headers().get(header::CONTENT_DISPOSITION) {
-        filename.to_owned()
-    } else {
-        let resp = client.get(url).send().await?;
-        resp.headers().get(header::CONTENT_DISPOSITION).ok_or("No Content-Disposition header found")?.to_owned()
-    };
-
-    let content_disposition_str = content_disposition.to_str()?;
-    let file_name = content_disposition_str
-        .split(';')
-        .find_map(|part| {
-            let part = part.trim();
-            if part.starts_with("filename=") {
-                Some(part.trim_start_matches("filename=").trim_matches('"'))
-            } else {
-                None
-            }
-        })
-        .ok_or("Filename not found in Content-Disposition header")?;
-    Ok(file_name.to_string())
-}
-
-fn get_subscription_file_destination() -> String {
-    let os_type = std::env::consts::OS;
-    let home_dir = match home::home_dir() {
-        Some(path) => {
-            if !path.as_os_str().is_empty() {
-                path.display().to_string()
-            } else {
-                "./".to_string()
-            }
-        }
-        _ => "./".to_string(),
-    };
-    match os_type {
-        "macos" => home_dir + "/.config/clash/",
-        "linux" => home_dir + "/.config/clash/profiles/",
-        "windows" => home_dir + "\\.config\\clash\\profiles",
-        _ => "./".to_string(),
-    }
-}
-
-pub async fn download_subscription_configuration_file(link: &str) {
-    log::info!("Downloading configuration file...");
-    let resp = reqwest::get(link).await.expect("request failed");
-    let body = resp.text().await.expect("body invalid");
-    let filename = get_file_name(link).await.unwrap();
-    let path = get_subscription_file_destination() + &filename;
-    let mut out = File::create(&path).expect("failed to create file");
-    copy(&mut body.as_bytes(), &mut out).expect("failed to copy content");
-    log::info!("Configuration file downloaded, path: {}", path);
 }
 
 #[derive(Debug)]

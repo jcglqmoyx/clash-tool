@@ -52,7 +52,7 @@ async fn get_domain() -> Result<String, reqwest::Error> {
 
 pub async fn create_temp_mail_account() -> Result<TempEmailAccount, reqwest::Error> {
     log::info!("Creating a temporary email account...");
-    let domain = get_domain().await.unwrap();
+    let domain = get_domain().await?;
     let username = get_random_username(8, 10);
     let address = format!("{}@{}", username, domain);
     let password = get_random_username(9, 10);
@@ -84,7 +84,7 @@ fn extract_verification_code_from_json(json_str: &str) -> Result<String, serde_j
     struct Message {
         intro: String,
     }
-    let parsed: MessageCollection = serde_json::from_str(json_str).unwrap();
+    let parsed: MessageCollection = serde_json::from_str(json_str)?;
     if let Some(first_message) = parsed.member.first() {
         let regex = Regex::new(r"^[a-z0-9]{5,6}$|验证代码为: ([a-zA-Z0-9]{6})，请在网页中填写").unwrap();
         if let Some(caps) = regex.captures(&first_message.intro) {
@@ -113,13 +113,13 @@ async fn get_token(account: TempEmailAccount) -> Result<String, reqwest::Error> 
 pub async fn get_verification_code(temp_email_account: TempEmailAccount) -> Result<String, reqwest::Error> {
     log::info!("Getting verification code...");
     for _ in 0..600 {
-        let token = get_token(temp_email_account.clone()).await.unwrap();
+        let token = get_token(temp_email_account.clone()).await?;
         let response = Client::new()
             .get(mail_tm::GET_MESSAGE_API)
             .header("Authorization", format!("Bearer {}", token))
             .send()
             .await?;
-        let response_text = response.text().await.unwrap();
+        let response_text = response.text().await?;
         let verification_code = extract_verification_code_from_json(&response_text).unwrap();
         if verification_code != String::from("") {
             log::info!("Verification code: {}", verification_code);
