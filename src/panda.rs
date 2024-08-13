@@ -41,7 +41,7 @@ pub async fn register(email: &mail_tm::TempEmailAccount, verification_code: Stri
     Ok(())
 }
 
-pub async fn login(email: mail_tm::TempEmailAccount) -> Result<String, Error> {
+pub async fn login(email: &mail_tm::TempEmailAccount) -> Result<String, Error> {
     log::info!("Logging into Panda Node account...");
     let client = Client::builder()
         .use_rustls_tls()

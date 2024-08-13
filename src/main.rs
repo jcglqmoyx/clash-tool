@@ -46,7 +46,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             panda::verify(&temp_email_account.address).await?;
             let verification_code = mail_tm::get_verification_code(temp_email_account.clone()).await?;
             panda::register(&temp_email_account, verification_code).await?;
-            clash_subscription_link = Option::from(panda::login(temp_email_account.clone()).await?);
+            clash_subscription_link = Option::from(panda::login(&temp_email_account).await?);
         }
         "3" => {
             log::info!("You chose to register a 加速狗 account.");
