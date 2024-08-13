@@ -106,7 +106,6 @@ fn extract_verification_code_from_json(json_str: &str) -> Result<String, serde_j
                 return Ok(code.as_str().to_string());
             }
         }
-        println!("{}\n", first_message.intro);
     }
     Ok(String::from(""))
 }
