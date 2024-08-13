@@ -5,7 +5,7 @@ use fern::Dispatch;
 use log::LevelFilter;
 use teloxide::{prelude::Requester, types::ChatId, Bot};
 
-use clash_tool::{cyan, gou, mail_tm, panda, qlgq, util, xfx_ssr};
+use clash_tool::{cyan, gou, mail_tm, panda, util, wall, xfx_ssr};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -66,11 +66,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         "5" => {
             log::info!("You chose to register a 墙了个墙 account.");
             let temp_email_account = mail_tm::create_temp_mail_account().await?;
-            qlgq::send_verification_code_to_email(&temp_email_account.address).await?;
+            wall::send_verification_code_to_email(&temp_email_account.address).await?;
             let verification_code = mail_tm::get_verification_code(&temp_email_account).await?;
-            qlgq::register(&temp_email_account, verification_code).await?;
-            let cookies = qlgq::login(&temp_email_account).await?;
-            clash_subscription_link = Option::from(qlgq::get_subscription_link(&cookies).await?);
+            wall::register(&temp_email_account, verification_code).await?;
+            let cookies = wall::login(&temp_email_account).await?;
+            clash_subscription_link = Option::from(wall::get_subscription_link(&cookies).await?);
         }
         "h" => { print!("1: Cyanmori\n2: Panda\n3: 加速狗\n4: 小飞侠SSR\n5: 墙了个墙\nh: show help\n"); }
         _ => { println!("doing nothing"); }
