@@ -32,7 +32,7 @@ async fn get_domain() -> Result<String, reqwest::Error> {
                         Some(index) => {
                             let next_index = find_substring_after_index(s.as_str(), "\"", index + p.len()).unwrap();
                             let result = &s[index + p.len()..next_index];
-                            return Ok(result.parse().unwrap());
+                            Ok(result.parse().unwrap())
                         }
                         None => {
                             process::exit(1);
@@ -47,7 +47,7 @@ async fn get_domain() -> Result<String, reqwest::Error> {
         Err(_) => {
             process::exit(1);
         }
-    };
+    }
 }
 
 pub async fn create_temp_mail_account() -> Result<TempEmailAccount, reqwest::Error> {
