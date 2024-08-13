@@ -31,7 +31,7 @@ pub mod xfx_ssr {
     pub const SUBSCRIPTION_LINK_PREFIX: &str = "https://www.xfxssr.com/api/v1/client/subscribe?token=";
 }
 
-pub mod qlgq {
+pub mod wall {
     pub const MAIL_VERIFICATION_CODE_API: &str = "https://www.qlgq.top/auth/send";
     pub const REGISTRATION_API: &str = "https://www.qlgq.top/auth/register";
     pub const LOGIN_API: &str = "https://www.qlgq.top/auth/login";

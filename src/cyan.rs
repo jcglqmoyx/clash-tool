@@ -1,11 +1,9 @@
-use std::{
-    collections::HashMap,
-};
+use std::collections::HashMap;
 
 use reqwest::{
+    header,
     Client,
     Error,
-    header,
     Response,
 };
 
@@ -15,7 +13,7 @@ use crate::{
 };
 
 pub async fn register(record: &util::Record) -> Result<Response, Error> {
-    log::info!("Registering Cyanmori account..");
+    log::info!("Registering 青森 account..");
     let url = cyan::REGISTRATION_API;
     log::info!("{:#?}", &record);
     let resp = Client::new()
@@ -24,16 +22,16 @@ pub async fn register(record: &util::Record) -> Result<Response, Error> {
             ("name", &record.username),
             ("email", &record.email),
             ("passwd", &record.password),
-            ("repasswd", &record.password),
+            (r#"repasswd"#, &record.password),
         ])
         .send()
         .await?;
-    log::info!("Register Cyanmori account response: {}", resp.status());
+    log::info!("Register 青森 account response: {}", resp.status());
     Ok(resp)
 }
 
 pub async fn login(record: &util::Record) -> Result<HashMap<String, String>, Error> {
-    log::info!("Logging into Cyanmori account...");
+    log::info!("Logging into 青森 account...");
     let params = [("email", &record.email), ("passwd", &record.password)];
     let response = Client::new().post(cyan::LOGIN_API).form(&params).send().await?;
     let headers = response.headers();
@@ -65,7 +63,7 @@ pub async fn get_subscription_link(cookies: &HashMap<String, String>) -> Result<
         .await;
     let response_text = resp.unwrap().text().await;
     let string = response_text.unwrap_or(String::new());
-    let substring = "index.oneclickImport(\'clash\',\'";
+    let substring = r#"index.oneclickImport(\'clash\',\'"#;
     match string.find(substring) {
         Some(index) => {
             let substring = string.get(index + substring.len()..).unwrap();

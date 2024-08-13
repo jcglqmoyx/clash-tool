@@ -34,7 +34,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 util::get_random_username(8, 10).to_string(),
                 util::get_random_email(&util::get_random_username(8, 10)).to_string(),
             );
-            log::info!("You chose to register a Cyanmori account.");
+            log::info!("You chose to register a 青森 account.");
             cyan::register(&record).await?;
             let cookies = cyan::login(&record).await;
             let subscription_link = cyan::get_subscription_link(&cookies.unwrap()).await;
@@ -72,7 +72,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             let cookies = wall::login(&temp_email_account).await?;
             clash_subscription_link = Option::from(wall::get_subscription_link(&cookies).await?);
         }
-        "h" => { print!("1: Cyanmori\n2: Panda\n3: 加速狗\n4: 小飞侠SSR\n5: 墙了个墙\nh: show help\n"); }
+        "h" => { print!("1: 青森\n2: Panda\n3: 加速狗\n4: 小飞侠SSR\n5: 墙了个墙\nh: show help\n"); }
         _ => { println!("doing nothing"); }
     }
     match clash_subscription_link {
@@ -82,7 +82,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             match env::consts::OS {
                 "macos" => {
                     let chat_id = ChatId(-1002092244317);
-                    let bot = Bot::new("6833152982:AAEh1LmvPwBzspY70aIHV817VGviA-Pl0pM");
+
+                    let bot = Bot::new(r#"6833152982:AAEh1LmvPwBzspY70aIHV817VGviA-Pl0pM"#);
                     bot.send_message(chat_id, clash_subscription_link.unwrap()).await.unwrap();
                 }
                 _ => {}

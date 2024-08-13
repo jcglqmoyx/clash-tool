@@ -2,9 +2,7 @@ use rand::Rng;
 use reqwest::{cookie::Cookie, header::{HeaderMap, HeaderValue}};
 use std::{collections::HashMap, fmt::{self, Formatter}};
 
-const EMAIL_DOMAINS: [&str; 20] = ["gmail.com", "hotmail.com", "live.com", "yahoo.com", "icloud.com", "outlook.com", "protonmail.com",
-    "tutanota.de", "tutanota.com", "tutamail.com", "tuta.io", "yandex.com", "sina.com", "qq.com",
-    "naver.com", "163.com", "yeah.net", "126.com", "aliyun.com", "foxmail.com"];
+const EMAIL_DOMAINS: [&str; 13] = ["gmail.com", "hotmail.com", "live.com", "yahoo.com", "icloud.com", "outlook.com", "protonmail.com", "yandex.com", "sina.com", "qq.com", "163.com", "yeah.net", "126.com"];
 
 fn get_chars() -> Vec<char> {
     let mut chars = vec![];
@@ -41,7 +39,7 @@ pub fn get_random_email(prefix: &str) -> String {
 
 pub fn generate_http_request_headers() -> HeaderMap {
     let mut headers = HeaderMap::new();
-    headers.insert("User-Agent", HeaderValue::from_static("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36"));
+    headers.insert("User-Agent", HeaderValue::from_static(r#"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36"#));
     headers.insert("Content-Type", HeaderValue::from_static("application/json; charset=utf-8"));
     headers.insert("Accept", HeaderValue::from_static("*/*"));
     headers.insert("Accept-Language", HeaderValue::from_static("en-US,en;q=0.9"));

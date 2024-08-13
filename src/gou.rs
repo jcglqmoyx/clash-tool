@@ -47,11 +47,11 @@ pub async fn register(email: &mail_tm::TempEmailAccount, verification_code: Stri
             "email": email.address,
             "name": email.address,
             "passwd": email.password,
-            "repasswd": email.password,
+            r#"repasswd"#: email.password,
             "wechat": get_random_username(8, 10),
-            "imtype": 1,
+            r#"imtype"#: 1,
             "code": 0,
-            "emailcode": verification_code,
+            r#"emailcode"#: verification_code,
         }))
         .headers(generate_http_request_headers())
         .send()
