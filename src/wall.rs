@@ -1,59 +1,90 @@
 use std::collections::HashMap;
+use std::error;
 use std::str;
 use std::string::String;
 
 use regex::Regex;
 use reqwest::header::COOKIE;
 use reqwest::{Client, Error};
-use serde_json::json;
+use serde_json;
 
 use crate::api::wall;
 use crate::mail_tm;
 use crate::util::{cookies_to_string, generate_http_request_headers};
 
-pub async fn send_verification_code_to_email(email_address: &str) -> Result<(), Error> {
+pub async fn send_verification_code_to_email(email_address: &str) -> Result<(), Box<dyn error::Error>> {
     log::info!("Sending verification code to email...");
-    let client = Client::builder()
+
+    let client = match Client::builder()
         .use_rustls_tls()
-        .build()?;
-    let response = client
+        .build() {
+        Ok(c) => c,
+        Err(e) => return Err(Box::new(e)),
+    };
+
+    let response = match client
         .post(wall::MAIL_VERIFICATION_CODE_API)
-        .json(&json!({"email": email_address}))
+        .json(&serde_json::json!({"email": email_address}))
         .headers(generate_http_request_headers())
         .send()
-        .await?;
+        .await {
+        Ok(resp) => resp,
+        Err(e) => return Err(Box::new(e)),
+    };
+
     log::info!("Result: {:#?}", response.status());
+
     Ok(())
 }
 
-pub async fn register(email: &mail_tm::TempEmailAccount, verification_code: String) -> Result<(), Error> {
-    log::info!("Registering 墙了个墙 account...");
-    let client = Client::builder()
-        .use_rustls_tls()
-        .build()?;
 
-    let response = client
+pub async fn register(
+    email: &mail_tm::TempEmailAccount,
+    verification_code: String,
+) -> Result<(), Box<dyn error::Error>> {
+    log::info!("Registering account...");
+
+    let client = match Client::builder()
+        .use_rustls_tls()
+        .build() {
+        Ok(c) => c,
+        Err(e) => return Err(Box::new(e)),
+    };
+
+    let payload = serde_json::json!({
+        r#"emailcode"#: verification_code,
+        "code": "0",
+        "name": email.address,
+        "email": email.address,
+        "passwd": email.password,
+        r#"repasswd"#: email.password,
+    });
+
+    let response = match client
         .post(wall::REGISTRATION_API)
-        .json(&json!({
-            r#"emailcode"#: verification_code.as_str(),
-            "code": "0",
-            "name": email.address.as_str(),
-            "email": email.address.as_str(),
-            "passwd": email.password.as_str(),
-            r#"repasswd"#: email.password.as_str(),
-        }))
+        .json(&payload)
         .headers(generate_http_request_headers())
         .send()
-        .await?;
+        .await {
+        Ok(resp) => resp,
+        Err(e) => return Err(Box::new(e)),
+    };
 
-    log::info!("Result: {:#?}", &response.text().await);
+    let response_text = match response.text().await {
+        Ok(text) => text,
+        Err(e) => return Err(Box::new(e)),
+    };
+
+    log::info!("Result: {:#?}", response_text);
+
     Ok(())
 }
+
 pub async fn login(email: &mail_tm::TempEmailAccount) -> Result<HashMap<String, String>, Error> {
     log::info!("Logging into 墙了个墙 account...");
     let response = Client::new()
         .post(wall::LOGIN_API)
-        .json(&json!({
+        .json(&serde_json::json!({
             "code":"",
             "email": email.address,
             "passwd": email.password,
@@ -66,19 +97,36 @@ pub async fn login(email: &mail_tm::TempEmailAccount) -> Result<HashMap<String, 
     log::info!("Result: {:#?}", response.status());
     Ok(cookies)
 }
-pub async fn get_subscription_link(cookies: &HashMap<String, String>) -> Result<String, Box<dyn std::error::Error>> {
-    let response = Client::new()
+
+pub async fn get_subscription_link(
+    cookies: &HashMap<String, String>
+) -> Result<String, Box<dyn error::Error>> {
+    let response = match Client::new()
         .get(wall::USER_PROFILE_API)
         .header(COOKIE, cookies_to_string(cookies))
         .send()
-        .await?
-        .bytes()
-        .await?;
+        .await {
+        Ok(resp) => match resp.bytes().await {
+            Ok(bytes) => bytes,
+            Err(e) => return Err(Box::new(e)),
+        },
+        Err(e) => return Err(Box::new(e)),
+    };
 
-    let re = Regex::new(r"https://\S+?\.top/link/\S+?\?clash=1").unwrap();
-    for mat in re.find_iter(str::from_utf8(&response).unwrap()) {
-        log::info!("Subscription link: {}", &mat.as_str().to_string());
+    let response_str = match str::from_utf8(&response) {
+        Ok(s) => s,
+        Err(e) => return Err(Box::new(e)),
+    };
+
+    let re = match Regex::new(r"https://\S+?\.top/link/\S+?\?clash=1") {
+        Ok(regex) => regex,
+        Err(e) => return Err(Box::new(e)),
+    };
+
+    for mat in re.find_iter(response_str) {
+        log::info!("Subscription link: {}", mat.as_str());
         return Ok(mat.as_str().to_string());
     }
+
     Ok("".to_string())
 }
