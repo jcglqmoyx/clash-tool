@@ -1,3 +1,4 @@
+use std::error;
 use reqwest::{Client, Error};
 use serde_json::{json, Value};
 
@@ -41,24 +42,52 @@ pub async fn register(email: &mail_tm::TempEmailAccount, verification_code: Stri
     Ok(())
 }
 
-pub async fn login(email: &mail_tm::TempEmailAccount) -> Result<String, Error> {
+pub async fn login(email: &mail_tm::TempEmailAccount) -> Result<String, Box<dyn error::Error>> {
     log::info!("Logging into Panda Node account...");
-    let client = Client::builder()
-        .use_rustls_tls()
-        .build()?;
 
-    let response = client
+    // Create and configure the HTTP client
+    let client = match Client::builder()
+        .use_rustls_tls()
+        .build() {
+        Ok(c) => c,
+        Err(e) => return Err(Box::new(e)),
+    };
+
+    // Prepare and send the POST request
+    let response = match client
         .post(panda::LOGIN_API)
-        .json(&json!({
+        .json(&serde_json::json!({
             "email": email.address,
             "password": email.password,
         }))
         .send()
-        .await?;
-    let response_text = response.text().await?;
-    let v: Value = serde_json::from_str(&response_text).unwrap();
-    let token = &v["data"]["token"];
-    log::info!("Token: {:#?}", &token);
-    log::info!("Subscription link: {:#?}", panda::SUBSCRIPTION_LINK_PREFIX.to_owned() + token.as_str().unwrap());
-    Ok(panda::SUBSCRIPTION_LINK_PREFIX.to_owned() + token.as_str().unwrap())
+        .await {
+        Ok(resp) => resp,
+        Err(e) => return Err(Box::new(e)),
+    };
+
+    // Get the response text
+    let response_text = match response.text().await {
+        Ok(text) => text,
+        Err(e) => return Err(Box::new(e)),
+    };
+
+    // Parse the response text as JSON
+    let v: Result<Value, _> = serde_json::from_str(&response_text);
+    let v = match v {
+        Ok(val) => val,
+        Err(e) => return Err(Box::new(e)),
+    };
+
+    let token = match v["data"]["token"].as_str() {
+        Some(t) => t,
+        None => return Err(Box::new("")),
+    };
+
+    log::info!("Token: {:#?}", token);
+
+    let subscription_link = format!("{}{}", panda::SUBSCRIPTION_LINK_PREFIX, token);
+    log::info!("Subscription link: {:#?}", subscription_link);
+
+    Ok(subscription_link)
 }
