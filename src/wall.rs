@@ -3,14 +3,13 @@ use std::error;
 use std::str;
 use std::string::String;
 
+use crate::api::wall;
+use crate::mail_tm;
+use crate::util::{cookies_to_string, generate_http_request_headers};
 use regex::Regex;
 use reqwest::header::COOKIE;
 use reqwest::{Client, Error};
 use serde_json;
-
-use crate::api::wall;
-use crate::mail_tm;
-use crate::util::{cookies_to_string, generate_http_request_headers};
 
 pub async fn send_verification_code_to_email(email_address: &str) -> Result<(), Box<dyn error::Error>> {
     log::info!("Sending verification code to email...");
@@ -82,7 +81,7 @@ pub async fn register(
 
 pub async fn login(email: &mail_tm::TempEmailAccount) -> Result<HashMap<String, String>, Error> {
     log::info!("Logging into 墙了个墙 account...");
-    let response = Client::new()
+    let response = match Client::new()
         .post(wall::LOGIN_API)
         .json(&serde_json::json!({
             "code":"",
@@ -90,7 +89,10 @@ pub async fn login(email: &mail_tm::TempEmailAccount) -> Result<HashMap<String, 
             "passwd": email.password,
         }))
         .send()
-        .await?;
+        .await {
+        Ok(resp) => resp,
+        Err(e) => return Err(*Box::new(e)),
+    };
 
     let cookies = crate::util::parse_cookies(response.cookies().collect::<Vec<_>>());
     log::info!("Cookies: {:#?}", cookies);
