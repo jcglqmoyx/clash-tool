@@ -1,6 +1,6 @@
-use std::error;
 use reqwest::{Client, Error};
-use serde_json::{json, Value};
+use serde_json::{self, Value};
+use std::error;
 
 use crate::{
     api::panda,
@@ -15,7 +15,7 @@ pub async fn verify(email_address: &str) -> Result<(), Error> {
         .build()?;
     let response = client
         .post(panda::MAIL_VERIFICATION_CODE_API)
-        .json(&json!({"email": email_address}))
+        .json(&serde_json::json!({"email": email_address}))
         .headers(util::generate_http_request_headers())
         .send()
         .await?;
@@ -30,7 +30,7 @@ pub async fn register(email: &mail_tm::TempEmailAccount, verification_code: Stri
         .build()?;
     let response = client
         .post(panda::REGISTRATION_API)
-        .json(&json!({
+        .json(&serde_json::json!({
             "email": email.address,
             "email_code": verification_code,
             "password": email.password,
@@ -45,7 +45,6 @@ pub async fn register(email: &mail_tm::TempEmailAccount, verification_code: Stri
 pub async fn login(email: &mail_tm::TempEmailAccount) -> Result<String, Box<dyn error::Error>> {
     log::info!("Logging into Panda Node account...");
 
-    // Create and configure the HTTP client
     let client = match Client::builder()
         .use_rustls_tls()
         .build() {
@@ -53,7 +52,6 @@ pub async fn login(email: &mail_tm::TempEmailAccount) -> Result<String, Box<dyn 
         Err(e) => return Err(Box::new(e)),
     };
 
-    // Prepare and send the POST request
     let response = match client
         .post(panda::LOGIN_API)
         .json(&serde_json::json!({
@@ -66,23 +64,18 @@ pub async fn login(email: &mail_tm::TempEmailAccount) -> Result<String, Box<dyn 
         Err(e) => return Err(Box::new(e)),
     };
 
-    // Get the response text
     let response_text = match response.text().await {
         Ok(text) => text,
         Err(e) => return Err(Box::new(e)),
     };
 
-    // Parse the response text as JSON
     let v: Result<Value, _> = serde_json::from_str(&response_text);
     let v = match v {
         Ok(val) => val,
         Err(e) => return Err(Box::new(e)),
     };
 
-    let token = match v["data"]["token"].as_str() {
-        Some(t) => t,
-        None => return Err(Box::new("")),
-    };
+    let token = v["data"]["token"].as_str().unwrap();
 
     log::info!("Token: {:#?}", token);
 
