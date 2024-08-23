@@ -40,14 +40,8 @@ pub async fn login(record: &util::Record) -> Result<HashMap<String, String>, Err
             let cookie_parts: Vec<&str> = s.split(';').collect();
             if let Some(first_part) = cookie_parts.first() {
                 let key_value: Vec<&str> = first_part.split('=').collect();
-                if key_value.len() == 2 {
-                    Some((key_value[0].trim().to_string(), key_value[1].trim().to_string()))
-                } else {
-                    None
-                }
-            } else {
-                None
-            }
+                if key_value.len() == 2 { Some((key_value[0].trim().to_string(), key_value[1].trim().to_string())) } else { None }
+            } else { None }
         })
     }).collect::<HashMap<_, _>>();
     log::info!("Cookies: {:#?}", cookies);
