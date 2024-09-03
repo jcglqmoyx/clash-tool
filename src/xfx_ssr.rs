@@ -1,7 +1,7 @@
+use crate::api::xfx_ssr;
+use crate::util::generate_http_request_headers;
 use reqwest::{Client, Error};
 use serde::Deserialize;
-
-use crate::api::xfx_ssr;
 
 pub async fn register(email_account: &str) -> Result<(), Error> {
     log::info!("Registering 小飞侠SSR account...");
