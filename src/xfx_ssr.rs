@@ -1,5 +1,4 @@
 use crate::api::xfx_ssr;
-use crate::util::generate_http_request_headers;
 use reqwest::{Client, Error};
 use serde::Deserialize;
 
