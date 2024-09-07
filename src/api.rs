@@ -28,7 +28,7 @@ pub mod gou {
 pub mod xfx_ssr {
     pub const REGISTRATION_API: &str = "https://xfxssr.top/api/v1/passport/auth/register";
     pub const LOGIN_API: &str = "https://xfxssr.top/api/v1/passport/auth/login";
-    pub const SUBSCRIPTION_LINK_PREFIX: &str = "https://www.xfxssr.top/api/v1/client/subscribe?token=";
+    pub const SUBSCRIPTION_LINK_PREFIX: &str = "http://xfxssr.info/api/v1/client/subscribe?token=";
 }
 
 pub mod wall {
