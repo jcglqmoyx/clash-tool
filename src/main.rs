@@ -5,7 +5,7 @@ use fern::Dispatch;
 use log::LevelFilter;
 use teloxide::{prelude::Requester, types::ChatId, Bot};
 
-use clash_tool::{cyan, gou, mail_tm, util, wall, xfx_ssr};
+use clash_tool::{gou, mail_tm, util, wall, xfx_ssr};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -29,18 +29,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut clash_subscription_link: Option<String> = None;
     match option {
         "1" => {
-            let record = util::Record::new(
-                util::get_random_username(8, 10).to_string(),
-                util::get_random_username(8, 10).to_string(),
-                util::get_random_email(&util::get_random_username(8, 10)).to_string(),
-            );
-            log::info!("You chose to register a 青森 account.");
-            cyan::register(&record).await?;
-            let cookies = cyan::login(&record).await;
-            let subscription_link = cyan::get_subscription_link(&cookies.unwrap()).await;
-            clash_subscription_link = Option::from(subscription_link.unwrap().to_string());
-        }
-        "2" => {
             log::info!("You chose to register a 加速狗 account.");
             let temp_email_account = mail_tm::create_temp_mail_account().await?;
             gou::send_verification_code_to_email(&temp_email_account.address).await?;
@@ -49,13 +37,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             let cookies = gou::login(&temp_email_account).await?;
             clash_subscription_link = Option::from(gou::get_subscription_link(&cookies).await?);
         }
-        "3" => {
+        "2" => {
             log::info!("You chose to register a 小飞侠SSR account.");
             let random_email_account = util::get_random_email(&util::get_random_username(8, 10)).to_string();
             xfx_ssr::register(&random_email_account).await?;
             clash_subscription_link = Option::from(xfx_ssr::login(&random_email_account).await?);
         }
-        "4" => {
+        "3" => {
             log::info!("You chose to register a 墙了个墙 account.");
             let temp_email_account = mail_tm::create_temp_mail_account().await?;
             wall::send_verification_code_to_email(&temp_email_account.address).await?;
@@ -64,7 +52,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             let cookies = wall::login(&temp_email_account).await?;
             clash_subscription_link = Option::from(wall::get_subscription_link(&cookies).await?);
         }
-        "h" => { print!("1: 青森\n2: 加速狗\n3: 小飞侠SSR\n4: 墙了个墙\nh: show help\n"); }
+        "h" => { print!("1: 加速狗\n2: 小飞侠SSR\n3: 墙了个墙\nh: show help\n"); }
         _ => { println!("doing nothing"); }
     }
     match clash_subscription_link {

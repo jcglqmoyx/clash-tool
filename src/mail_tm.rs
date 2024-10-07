@@ -98,7 +98,7 @@ fn extract_verification_code_from_json(json_str: &str) -> Result<String, serde_j
             }
         }
 
-        // Panda Nodes, 加速狗
+        // 加速狗
         let regex = Regex::new(r"[0-9]{6}").unwrap();
         if let Some(caps) = regex.captures(&first_message.intro) {
             if let Some(code) = caps.get(0) {

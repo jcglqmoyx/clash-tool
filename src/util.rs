@@ -1,6 +1,6 @@
 use rand::Rng;
 use reqwest::{cookie::Cookie, header::{HeaderMap, HeaderValue}};
-use std::{collections::HashMap, fmt::{self, Formatter}};
+use std::collections::HashMap;
 
 const EMAIL_DOMAINS: [&str; 13] = ["gmail.com", "hotmail.com", "live.com", "yahoo.com", "icloud.com", "outlook.com", "protonmail.com", "yandex.com", "sina.com", "qq.com", "163.com", "yeah.net", "126.com"];
 
@@ -60,27 +60,4 @@ pub fn cookies_to_string(cookies: &HashMap<String, String>) -> String {
         .map(|(name, value)| format!("{}={}", name, value))
         .collect::<Vec<_>>()
         .join("; ")
-}
-
-#[derive(Debug)]
-pub struct Record {
-    pub username: String,
-    pub password: String,
-    pub email: String,
-}
-
-impl Record {
-    pub fn new(username: String, password: String, email: String) -> Self {
-        Record {
-            username,
-            password,
-            email,
-        }
-    }
-}
-
-impl fmt::Display for Record {
-    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        Ok(write!(f, "username: {}\npassword: {}\nemail: {}\n", self.username, self.password, self.email).expect("TODO: panic message"))
-    }
 }
