@@ -57,7 +57,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 "macos" => {
                     let chat_id = ChatId(-4669051123);
 
-                    let bot = Bot::new(r#"6833152982:AAEh1LmvPwBzspY70aIHV817VGviA-Pl0pM"#);
+                    let bot = Bot::new(r#"7618630537:AAEyQ_WTF-OXM267x-MMQsLmLNWjda9MIRA"#);
                     bot.send_message(chat_id, clash_subscription_link.unwrap()).await.unwrap();
                 }
                 _ => {}
