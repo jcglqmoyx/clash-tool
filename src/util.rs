@@ -2,8 +2,6 @@ use rand::Rng;
 use reqwest::{cookie::Cookie, header::{HeaderMap, HeaderValue}};
 use std::collections::HashMap;
 
-const EMAIL_DOMAINS: [&str; 13] = ["gmail.com", "hotmail.com", "live.com", "yahoo.com", "icloud.com", "outlook.com", "protonmail.com", "yandex.com", "sina.com", "qq.com", "163.com", "yeah.net", "126.com"];
-
 fn get_chars() -> Vec<char> {
     let mut chars = vec![];
     for i in 'a'..='z' {
@@ -25,15 +23,6 @@ pub fn get_random_username(min_length: u32, max_length: u32) -> String {
         random_username.push(chars[idx]);
     }
     random_username
-}
-
-pub fn get_random_email(prefix: &str) -> String {
-    let mut random_email = prefix.to_string();
-    random_email.push('@');
-    let mut rng = rand::thread_rng();
-    let idx = rng.gen_range(0..EMAIL_DOMAINS.len());
-    random_email.push_str(EMAIL_DOMAINS[idx]);
-    random_email
 }
 
 pub fn generate_http_request_headers() -> HeaderMap {

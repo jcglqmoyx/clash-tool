@@ -5,7 +5,7 @@ use fern::Dispatch;
 use log::LevelFilter;
 use teloxide::{prelude::Requester, types::ChatId, Bot};
 
-use clash_tool::{gou, mail_tm, util, wall, xfx_ssr};
+use clash_tool::{gou, mail_tm, wall};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -38,12 +38,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             clash_subscription_link = Option::from(gou::get_subscription_link(&cookies).await?);
         }
         "2" => {
-            log::info!("You chose to register a 小飞侠SSR account.");
-            let random_email_account = util::get_random_email(&util::get_random_username(8, 10)).to_string();
-            xfx_ssr::register(&random_email_account).await?;
-            clash_subscription_link = Option::from(xfx_ssr::login(&random_email_account).await?);
-        }
-        "3" => {
             log::info!("You chose to register a 墙了个墙 account.");
             let temp_email_account = mail_tm::create_temp_mail_account().await?;
             wall::send_verification_code_to_email(&temp_email_account.address).await?;
@@ -52,7 +46,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             let cookies = wall::login(&temp_email_account).await?;
             clash_subscription_link = Option::from(wall::get_subscription_link(&cookies).await?);
         }
-        "h" => { print!("1: 加速狗\n2: 小飞侠SSR\n3: 墙了个墙\nh: show help\n"); }
+        "h" => { print!("1: 加速狗\n2: 墙了个墙\nh: show help\n"); }
         _ => { println!("doing nothing"); }
     }
     match clash_subscription_link {
@@ -61,7 +55,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             ctx.set_contents(link.to_string())?;
             match env::consts::OS {
                 "macos" => {
-                    let chat_id = ChatId(-1002092244317);
+                    let chat_id = ChatId(-4669051123);
 
                     let bot = Bot::new(r#"6833152982:AAEh1LmvPwBzspY70aIHV817VGviA-Pl0pM"#);
                     bot.send_message(chat_id, clash_subscription_link.unwrap()).await.unwrap();

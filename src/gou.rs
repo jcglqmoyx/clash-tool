@@ -18,8 +18,8 @@ use crate::{api::gou::{
 }, mail_tm, util, util::{
     cookies_to_string,
     generate_http_request_headers,
-    get_random_username,
 }};
+use crate::util::get_random_username;
 
 pub async fn send_verification_code_to_email(email_address: &str) -> Result<(), Error> {
     log::info!("Sending verification code to email...");
