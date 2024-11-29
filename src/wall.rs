@@ -12,7 +12,7 @@ use reqwest::{Client, Error};
 use serde_json;
 
 pub async fn send_verification_code_to_email(email_address: &str) -> Result<(), Box<dyn error::Error>> {
-    log::info!("Sending verification code to email...");
+    println!("Sending verification code to email...");
 
     let client = match Client::builder()
         .use_rustls_tls()
@@ -31,7 +31,7 @@ pub async fn send_verification_code_to_email(email_address: &str) -> Result<(), 
         Err(e) => return Err(Box::new(e)),
     };
 
-    log::info!("Result: {:#?}", response.status());
+    println!("Result: {:#?}", response.status());
 
     Ok(())
 }
@@ -41,7 +41,7 @@ pub async fn register(
     email: &mail_tm::TempEmailAccount,
     verification_code: String,
 ) -> Result<(), Box<dyn error::Error>> {
-    log::info!("Registering account...");
+    println!("Registering account...");
 
     let client = match Client::builder()
         .use_rustls_tls()
@@ -74,13 +74,12 @@ pub async fn register(
         Err(e) => return Err(Box::new(e)),
     };
 
-    log::info!("Result: {:#?}", response_text);
+    println!("Result: {:#?}", response_text);
 
     Ok(())
 }
 
 pub async fn login(email: &mail_tm::TempEmailAccount) -> Result<HashMap<String, String>, Error> {
-    log::info!("Logging into 墙了个墙 account...");
     let response = match Client::new()
         .post(wall::LOGIN_API)
         .json(&serde_json::json!({
@@ -95,8 +94,6 @@ pub async fn login(email: &mail_tm::TempEmailAccount) -> Result<HashMap<String, 
     };
 
     let cookies = crate::util::parse_cookies(response.cookies().collect::<Vec<_>>());
-    log::info!("Cookies: {:#?}", cookies);
-    log::info!("Result: {:#?}", response.status());
     Ok(cookies)
 }
 
@@ -126,7 +123,7 @@ pub async fn get_subscription_link(
     };
 
     for mat in re.find_iter(response_str) {
-        log::info!("Subscription link: {}", mat.as_str());
+        println!("Subscription link: {}", mat.as_str());
         return Ok(mat.as_str().to_string());
     }
 

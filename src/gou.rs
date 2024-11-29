@@ -22,7 +22,7 @@ use crate::{api::gou::{
 use crate::util::get_random_username;
 
 pub async fn send_verification_code_to_email(email_address: &str) -> Result<(), Error> {
-    log::info!("Sending verification code to email...");
+    println!("Sending verification code to email...");
     let client = Client::builder()
         .use_rustls_tls()
         .build()?;
@@ -32,12 +32,12 @@ pub async fn send_verification_code_to_email(email_address: &str) -> Result<(), 
         .headers(generate_http_request_headers())
         .send()
         .await?;
-    log::info!("Result: {:#?}", response.status());
+    println!("Result: {:#?}", response.status());
     Ok(())
 }
 
 pub async fn register(email: &mail_tm::TempEmailAccount, verification_code: String) -> Result<(), Error> {
-    log::info!("Registering 加速狗 account...");
+    println!("Registering 加速狗 account...");
     let client = Client::builder()
         .use_rustls_tls()
         .build()?;
@@ -56,13 +56,11 @@ pub async fn register(email: &mail_tm::TempEmailAccount, verification_code: Stri
         .headers(generate_http_request_headers())
         .send()
         .await?;
-    log::info!("Result: {:#?}", &response.status());
     println!("{:#?}", &response.text().await);
     Ok(())
 }
 
 pub async fn login(email: &mail_tm::TempEmailAccount) -> Result<HashMap<String, String>, Error> {
-    log::info!("Logging into 加速狗 account...");
     let response = Client::new()
         .post(LOGIN_API)
         .json(&json!({
@@ -73,8 +71,7 @@ pub async fn login(email: &mail_tm::TempEmailAccount) -> Result<HashMap<String, 
         .await?;
 
     let cookies = util::parse_cookies(response.cookies().collect::<Vec<_>>());
-    log::info!("Cookies: {:#?}", cookies);
-    log::info!("Result: {:#?}", response.status());
+    println!("Result: {:#?}", response.status());
     Ok(cookies)
 }
 
@@ -98,7 +95,7 @@ pub async fn get_subscription_link(cookies: &HashMap<String, String>) -> Result<
     let mut subscription_link = String::new();
     for element in document.select(&selector) {
         if let Some(value) = element.value().attr("value") {
-            log::info!("Found subscription link: {}", value);
+            println!("Found subscription link: {}", value);
             subscription_link = value.to_string();
         }
     }

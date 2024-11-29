@@ -1,35 +1,18 @@
 use std::env;
 
 use clipboard::{ClipboardContext, ClipboardProvider};
-use fern::Dispatch;
-use log::LevelFilter;
 use teloxide::{prelude::Requester, types::ChatId, Bot};
 
 use clash_tool::{gou, mail_tm, wall};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    Dispatch::new()
-        .format(|out, message, record| {
-            out.finish(format_args!(
-                "{}[{}][{}] {}",
-                chrono::Local::now().format("[%Y-%m-%d][%H:%M:%S]"),
-                record.target(),
-                record.level(),
-                message
-            ))
-        })
-        .level(LevelFilter::Info)
-        .chain(std::io::stdout())
-        .chain(fern::log_file("registration_result.log")?)
-        .apply()?;
-
     let args: Vec<String> = env::args().collect();
     let option = if args.len() == 1 { "h" } else { &args[1] };
     let mut clash_subscription_link: Option<String> = None;
     match option {
         "1" => {
-            log::info!("You chose to register a 加速狗 account.");
+            println!("You chose to register a 加速狗 account.");
             let temp_email_account = mail_tm::create_temp_mail_account().await?;
             gou::send_verification_code_to_email(&temp_email_account.address).await?;
             let verification_code = mail_tm::get_verification_code(&temp_email_account).await?;
@@ -38,7 +21,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             clash_subscription_link = Option::from(gou::get_subscription_link(&cookies).await?);
         }
         "2" => {
-            log::info!("You chose to register a 墙了个墙 account.");
+            println!("You chose to register a 墙了个墙 account.");
             let temp_email_account = mail_tm::create_temp_mail_account().await?;
             wall::send_verification_code_to_email(&temp_email_account.address).await?;
             let verification_code = mail_tm::get_verification_code(&temp_email_account).await?;
