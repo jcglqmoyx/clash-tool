@@ -1,8 +1,5 @@
 use std::env;
 
-use clipboard::{ClipboardContext, ClipboardProvider};
-use teloxide::{prelude::Requester, types::ChatId, Bot};
-
 use clash_tool::{gou, mail_tm, wall};
 
 #[tokio::main]
@@ -29,24 +26,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             let cookies = wall::login(&temp_email_account).await?;
             clash_subscription_link = Option::from(wall::get_subscription_link(&cookies).await?);
         }
-        "h" => { print!("1: 加速狗\n2: 墙了个墙\nh: show help\n"); }
-        _ => { println!("doing nothing"); }
-    }
-    match clash_subscription_link {
-        Some(ref link) => {
-            let mut ctx: ClipboardContext = ClipboardProvider::new()?;
-            ctx.set_contents(link.to_string())?;
-            match env::consts::OS {
-                "macos" => {
-                    let chat_id = ChatId(-1002465872276);
-
-                    let bot = Bot::new(r#"7618630537:AAEyQ_WTF-OXM267x-MMQsLmLNWjda9MIRA"#);
-                    bot.send_message(chat_id, clash_subscription_link.unwrap()).await.unwrap();
-                }
-                _ => {}
-            }
+        "h" => {
+            print!("1: 加速狗\n2: 墙了个墙\nh: show help\n");
         }
-        None => {}
+        _ => {
+            println!("doing nothing");
+        }
     }
     Ok(())
 }

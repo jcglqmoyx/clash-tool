@@ -14,5 +14,3 @@ serde = { version = "1.0.215", features = ["derive"] }
 regex = "1.11.1"
 encoding_rs_io = "0.1.7"
 scraper = "0.21.0"
-clipboard = "0.5.0"
-teloxide = "0.13.0"
