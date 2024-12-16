@@ -6,10 +6,10 @@ pub mod mail_tm {
 }
 
 pub mod gou {
-    pub const MAIL_VERIFICATION_CODE_API: &str = "https://jiasugou.me/auth/send";
-    pub const REGISTRATION_API: &str = "https://jiasugou.me/auth/register";
-    pub const LOGIN_API: &str = "https://jiasugou.me/auth/login";
-    pub const USER_PROFILE_API: &str = "https://jiasugou.me/user";
+    pub const MAIL_VERIFICATION_CODE_API: &str = "https://v.jiasugou.live/auth/send";
+    pub const REGISTRATION_API: &str = "https://v.jiasugou.live/auth/register";
+    pub const LOGIN_API: &str = "https://v.jiasugou.live/auth/login";
+    pub const USER_PROFILE_API: &str = "https://v.jiasugou.live/user";
 }
 
 pub mod wall {
