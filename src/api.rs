@@ -11,10 +11,3 @@ pub mod gou {
     pub const LOGIN_API: &str = "https://v.jiasugou.live/auth/login";
     pub const USER_PROFILE_API: &str = "https://v.jiasugou.live/user";
 }
-
-pub mod wall {
-    pub const MAIL_VERIFICATION_CODE_API: &str = "https://www.qlgq.top/auth/send";
-    pub const REGISTRATION_API: &str = "https://www.qlgq.top/auth/register";
-    pub const LOGIN_API: &str = "https://www.qlgq.top/auth/login";
-    pub const USER_PROFILE_API: &str = "https://www.qlgq.top/user";
-}
