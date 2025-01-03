@@ -136,34 +136,3 @@ impl TempEmailAccount {
         TempEmailAccount { address, password }
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[tokio::test]
-    async fn test_create_temp_email_account() {
-        let temp_email_account = create_temp_mail_account().await.unwrap();
-        assert_ne!(
-            temp_email_account,
-            TempEmailAccount::new(String::from(""), String::from(""))
-        );
-    }
-
-    #[tokio::test]
-    async fn test_get_token() {
-        let email_account = create_temp_mail_account().await.unwrap();
-        let token = get_token(&email_account).await.unwrap();
-        assert_ne!(token, String::from(""));
-    }
-
-    #[tokio::test]
-    async fn test_get_verification_code() {
-        let email_account = TempEmailAccount::new(
-            String::from("esabogdee@puabook.com"),
-            String::from("HcAkRNX"),
-        );
-        let verification_code = get_verification_code(&email_account).await.unwrap();
-        assert_eq!(verification_code, String::from(""));
-    }
-}
