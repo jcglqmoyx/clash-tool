@@ -1,10 +1,35 @@
 use rand::Rng;
-use reqwest::{cookie::Cookie, header::{HeaderMap, HeaderValue}};
-use std::{collections::HashMap, fmt::{self, Formatter}};
+use reqwest::{
+    cookie::Cookie,
+    header::{HeaderMap, HeaderValue},
+};
+use std::{
+    collections::HashMap,
+    fmt::{self, Formatter},
+};
 
-const EMAIL_DOMAINS: [&str; 20] = ["gmail.com", "hotmail.com", "live.com", "yahoo.com", "icloud.com", "outlook.com", "protonmail.com",
-    "tutanota.de", "tutanota.com", "tutamail.com", "tuta.io", "yandex.com", "sina.com", "qq.com",
-    "naver.com", "163.com", "yeah.net", "126.com", "aliyun.com", "foxmail.com"];
+const EMAIL_DOMAINS: [&str; 20] = [
+    "gmail.com",
+    "hotmail.com",
+    "live.com",
+    "yahoo.com",
+    "icloud.com",
+    "outlook.com",
+    "protonmail.com",
+    "tutanota.de",
+    "tutanota.com",
+    "tutamail.com",
+    "tuta.io",
+    "yandex.com",
+    "sina.com",
+    "qq.com",
+    "naver.com",
+    "163.com",
+    "yeah.net",
+    "126.com",
+    "aliyun.com",
+    "foxmail.com",
+];
 
 fn get_chars() -> Vec<char> {
     let mut chars = vec![];
@@ -42,10 +67,19 @@ pub fn get_random_email(prefix: &str) -> String {
 pub fn generate_http_request_headers() -> HeaderMap {
     let mut headers = HeaderMap::new();
     headers.insert("User-Agent", HeaderValue::from_static("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36"));
-    headers.insert("Content-Type", HeaderValue::from_static("application/json; charset=utf-8"));
+    headers.insert(
+        "Content-Type",
+        HeaderValue::from_static("application/json; charset=utf-8"),
+    );
     headers.insert("Accept", HeaderValue::from_static("*/*"));
-    headers.insert("Accept-Language", HeaderValue::from_static("en-US,en;q=0.9"));
-    headers.insert("Accept-Encoding", HeaderValue::from_static("gzip, deflate, br"));
+    headers.insert(
+        "Accept-Language",
+        HeaderValue::from_static("en-US,en;q=0.9"),
+    );
+    headers.insert(
+        "Accept-Encoding",
+        HeaderValue::from_static("gzip, deflate, br"),
+    );
     headers.insert("Connection", HeaderValue::from_static("keep-alive"));
     headers
 }
@@ -84,6 +118,11 @@ impl Record {
 
 impl fmt::Display for Record {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        Ok(write!(f, "username: {}\npassword: {}\nemail: {}\n", self.username, self.password, self.email).expect("TODO: panic message"))
+        Ok(write!(
+            f,
+            "username: {}\npassword: {}\nemail: {}\n",
+            self.username, self.password, self.email
+        )
+        .expect("TODO: panic message"))
     }
 }
