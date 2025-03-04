@@ -45,11 +45,11 @@ fn get_chars() -> Vec<char> {
 
 pub fn get_random_username(min_length: u32, max_length: u32) -> String {
     let mut random_username = String::new();
-    let mut rng = rand::thread_rng();
-    let len: u32 = rng.gen_range(min_length..max_length);
+    let mut rng = rand::rng();
+    let len: u32 = rng.random_range(min_length..max_length);
     let chars = get_chars();
     for _ in 0..len {
-        let idx = rng.gen_range(0..chars.len());
+        let idx = rng.random_range(0..chars.len());
         random_username.push(chars[idx]);
     }
     random_username
@@ -58,8 +58,8 @@ pub fn get_random_username(min_length: u32, max_length: u32) -> String {
 pub fn get_random_email(prefix: &str) -> String {
     let mut random_email = prefix.to_string();
     random_email.push('@');
-    let mut rng = rand::thread_rng();
-    let idx = rng.gen_range(0..EMAIL_DOMAINS.len());
+    let mut rng = rand::rng();
+    let idx = rng.random_range(0..EMAIL_DOMAINS.len());
     random_email.push_str(EMAIL_DOMAINS[idx]);
     random_email
 }
